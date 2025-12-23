@@ -16,7 +16,7 @@ import com.interpretor.types.Value;
 
 
 public class Interpretor {
-	Stack<String> StackMemory = new Stack<>();
+	StackMemory STACK = null;
 	Map<String, Object> Heap = new HashMap();
 	public Map<String, Object> getHeap(){
 		return this.Heap;
@@ -37,29 +37,33 @@ public class Interpretor {
 	}
 	public void render() throws Exception{
 		BufferedReader br = new BufferedReader(new FileReader(new File("C:\\Users\\User\\Documents\\workspace-spring-tools-for-eclipse-4.31.0.RELEASE\\Interpretor\\src\\com\\interpretor\\script\\inp_script")));
-		while(br.ready()) {
-			String line = br.readLine();
-			System.out.println(line);
-			line = line.trim();
-			int trv_indx = line.indexOf(' ');
-			String word = line.substring(0, trv_indx!=-1?trv_indx:0);
-			if(keywords.containsKey(word)) {
-				keywords.get(word).apply(line.substring(trv_indx).trim());
-			} else {
-				if(Heap.containsKey(word)) {
-				} else {
-//					throw new InvalidSyntaxException();
-				}
-			}
-		}
-//		String line = br.readLine();
-//		while(line!=null) {
-//			populateStack(line);
+//		while(br.ready()) {
+//			String line = br.readLine();
+//			System.out.println(line);
+//			line = line.trim();
+//			int trv_indx = line.indexOf(' ');
+//			String word = line.substring(0, trv_indx!=-1?trv_indx:0);
+//			if(keywords.containsKey(word)) {
+//				keywords.get(word).apply(line.substring(trv_indx).trim());
+//			} else {
+//				if(Heap.containsKey(word)) {
+//				} else {
+//				}
+//			}
 //		}
+		String[] code = (br.readLine()+" h").split(";");
+		for(String line : code) {
+			System.out.println(line);
+			if(line == "{}") {
+				continue;
+			}
+			this.STACK = populateStack(line);
+			StackMemory.Traverse(this.STACK.getEntryPoint());
+		}
 	}
-//	public void populateStack(String code) {
-//		
-//	}
+	private StackMemory populateStack(String code) {
+		return new StackMemory(code);
+	}
 	public void createVariable(String code) throws InvalidNameException, Exception {
 		String variableName = "";
 		Object variableData = null;
