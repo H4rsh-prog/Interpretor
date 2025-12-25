@@ -63,11 +63,24 @@ public class StackMemory {
 	public void Traverse_RIGHT(StackMemoryNODE root) {
 		root = root.getRight();
 	}
-	public static void Traverse(StackMemoryNODE root) {
+	public static void Traverse(StackMemoryNODE root, int indent) {
 		if(root == null) {return;}
-		System.out.print(root.getOPERAND()+" ");
-		Traverse(root.getLeft());
-		Traverse(root.getRight());
+		for(int i =0;i<indent;i++) {
+			System.out.print("\t");
+		}
+		System.out.print("\""+root.getOPERAND()+"\" \n");
+		for(int i =0;i<indent;i++) {
+			System.out.print("\t");
+		}
+		if(root.getRight()!=null) {
+			System.out.print("\\\n");
+			indent++;
+		} else {
+			System.out.print("| ");
+			System.out.println();
+		}
+		Traverse(root.getLeft(), Math.max(indent-1, 0));
+		Traverse(root.getRight(), indent);
 	}
 }
 

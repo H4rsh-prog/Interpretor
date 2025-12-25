@@ -53,7 +53,7 @@ public class Interpretor {
 				continue;
 			}
 			this.STACK = populateStack(line);
-			StackMemory.Traverse(this.STACK.getEntryPoint());
+			StackMemory.Traverse(this.STACK.getEntryPoint(),0);
 			executeStack(this.STACK);
 		}
 		((TwoParaFunction<String, Object, Void>) this.keywords.get("var")).apply("e",24);
