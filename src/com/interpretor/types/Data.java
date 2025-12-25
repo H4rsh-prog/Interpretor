@@ -1,8 +1,8 @@
 package com.interpretor.types;
 
-public class Number<T>{
+public class Data<T>{
 	T Data;
-	public Number(T Data) {
+	public Data(T Data) {
 		this.Data = Data;
 	}
 	@Override

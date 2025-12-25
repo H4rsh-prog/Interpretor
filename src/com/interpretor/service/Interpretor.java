@@ -5,14 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Stack;
-import java.util.function.Function;
 
 import com.interpretor.exception.InvalidNameException;
-import com.interpretor.exception.InvalidSyntaxException;
 import com.interpretor.types.Value;
+import com.interpretor.types.functionalInterfaces.TwoParaFunction;
 
 
 public class Interpretor {
@@ -21,16 +17,15 @@ public class Interpretor {
 	public Map<String, Object> getHeap(){
 		return this.Heap;
 	}
-	Map<String, Function> keywords = new HashMap();
+	Map<String, Object> keywords = new HashMap();
 	public Interpretor(){
-		this.keywords.put("var", new Function<String, Void>() {
+		this.keywords.put("var", new TwoParaFunction<String, Object, Void>() {
 			@Override
-			public Void apply(String t) {
-				try {
-					createVariable(t);
-				} catch (Exception e) {
-					e.printStackTrace();
+			public Void apply(String variableName, Object variableData) throws InvalidNameException {
+				if(((int)variableName.charAt(0))>=48 && ((int)variableName.charAt(0))<=57) {
+					throw new InvalidNameException("Variable Names cannot start with a Numeric Value");
 				}
+				getHeap().put(variableName, variableData);
 				return null;
 			}
 		});
@@ -51,7 +46,7 @@ public class Interpretor {
 //				}
 //			}
 //		}
-		String[] code = (br.readLine()+" h").split(";");
+		String[] code = br.readLine().split(";");
 		for(String line : code) {
 			System.out.println(line);
 			if(line == "{}") {
@@ -59,32 +54,18 @@ public class Interpretor {
 			}
 			this.STACK = populateStack(line);
 			StackMemory.Traverse(this.STACK.getEntryPoint());
+			executeStack(this.STACK);
 		}
+		((TwoParaFunction<String, Object, Void>) this.keywords.get("var")).apply("e",24);
+		((TwoParaFunction<String, Object, Void>) this.keywords.get("var")).apply("fe",new Object() { private int number = 0; public String toString() {return "" +(this.number);}});
+		System.out.println(getHeap());
+		System.out.println(Value.allocateDataType("helo world"));
+	}
+	private void executeStack(StackMemory stack) {
+		
 	}
 	private StackMemory populateStack(String code) {
 		return new StackMemory(code);
-	}
-	public void createVariable(String code) throws InvalidNameException, Exception {
-		String variableName = "";
-		Object variableData = null;
-		if(((int)code.charAt(0))>=48 && ((int)code.charAt(0))<=57) {
-			throw new InvalidNameException("Variable Names cannot start with a Numeric Value");
-		}
-		int trv_indx = 0;
-		for(char ch : code.toCharArray()) {
-			if(ch!=' ' && ch!='=') {
-				variableName += ch;
-				trv_indx++;
-			} else {
-				break;
-			}
-		}
-		code = code.substring(trv_indx).trim();
-		if(code.startsWith("=")) {
-			variableData = parseData(code.substring(1).trim());
-			System.out.println(variableData.getClass()+" VAL = "+variableData);
-		}
-		Heap.put(variableName, variableData);
 	}
 	Object parseData(String code) throws Exception{
 		if(code.startsWith("\"")) {
