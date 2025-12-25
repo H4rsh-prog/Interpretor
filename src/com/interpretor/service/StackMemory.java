@@ -73,10 +73,12 @@ public class StackMemory {
 			System.out.print("\t");
 		}
 		if(root.getRight()!=null) {
-			System.out.print("\\\n");
+			System.out.print("|\t\\\n");
 			indent++;
 		} else {
-			System.out.print("| ");
+			if(root.getLeft()!=null) {
+				System.out.print("| ");
+			}
 			System.out.println();
 		}
 		Traverse(root.getLeft(), Math.max(indent-1, 0));
