@@ -1,6 +1,6 @@
 package com.interpretor.types;
 
-public class Data<T>{
+public abstract class Data<T>{
 	T Data;
 	public Data(T Data) {
 		this.Data = Data;
@@ -9,4 +9,5 @@ public class Data<T>{
 	public String toString() {
 		return (this.Data)+"";
 	}
+//	abstract <T> T add(T DATA);
 }

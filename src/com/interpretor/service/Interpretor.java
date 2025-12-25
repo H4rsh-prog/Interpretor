@@ -7,13 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.interpretor.exception.InvalidNameException;
+import com.interpretor.types.Data;
 import com.interpretor.types.Value;
 import com.interpretor.types.functionalInterfaces.TwoParaFunction;
 
 
 public class Interpretor {
 	StackMemory STACK = null;
-	Map<String, Object> Heap = new HashMap();
+	static Map<String, Object> Heap = new HashMap();
 	public Map<String, Object> getHeap(){
 		return this.Heap;
 	}
@@ -27,6 +28,13 @@ public class Interpretor {
 				}
 				getHeap().put(variableName, variableData);
 				return null;
+			}
+		});
+		this.keywords.put("+", new TwoParaFunction<Data,Data,Data>(){
+
+			@Override
+			public Data apply(Data a, Data b) throws Exception {
+				return (Data) a.add(b);
 			}
 		});
 	}
