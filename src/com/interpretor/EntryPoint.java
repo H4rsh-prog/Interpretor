@@ -7,7 +7,6 @@ public class EntryPoint {
 	public static void main(String gg[]) {
 		try {
 			INTERPRETOR.render();
-			System.out.println(INTERPRETOR.getHeap());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

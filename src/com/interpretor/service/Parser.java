@@ -4,21 +4,47 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.interpretor.types.Data;
 import com.interpretor.types.Value;
+import com.interpretor.types.functionalInterfaces.TwoParaFunction;
 
 public class Parser {
-	private Set<String> declarationKeyword = new HashSet();
-	public Parser() {
-		Collections.addAll(this.declarationKeyword, "var", "const", "let");
-	}
-	private StackMemoryNODE Execute(StackMemoryNODE root, boolean declaration) {
+	private Set<String> declarationKeyword = Set.of("var", "const", "let");
+	private Set<String> operatorKeyword = Set.of("+", "-", "*", "/", "=");
+	private void parseValues(StackMemoryNODE root, boolean declaration, String variableName) throws Exception {
 		if(root.getLeft()==null) {
-			return null;
+			return;
 		}
-		if(declarationKeyword.contains(root.getOPERAND())) {
-			Execute(root.getLeft(), true);
+		if(!operatorKeyword.contains(root.getOPERAND())) {
+			root.setDATA(parseData(root.getOPERAND()));
 		}
-		
+		if(root.getRight()!=null) {
+			parseValues(root.getRight(), declaration, variableName);
+			parseValues(root.getLeft(), declaration, variableName);
+		}
+		if(root.getTop()==null) {
+			return;
+		}
+		if(root.getTop().getRight()==null || root.getTop().getRight()==root) {
+			if(operatorKeyword.contains(root.getTop().getOPERAND())) {
+				switch (root.getTop().getOPERAND()){
+					case "+":
+						root.getTop().setDATA((Data) root.getDATA().add(root.getTop().getLeft().getDATA()));
+						break;
+					case "-":
+						root.getTop().setDATA((Data) root.getDATA().sub(root.getTop().getLeft().getDATA()));
+						break;
+					case "*":
+						root.getTop().setDATA((Data) root.getDATA().mul(root.getTop().getLeft().getDATA()));
+						break;
+					case "/":
+						root.getTop().setDATA((Data) root.getDATA().div(root.getTop().getLeft().getDATA()));
+						break;
+					default:
+						root.getTop().setDATA(root.getDATA());
+				}
+			}
+		}
 	}
 	<T> T parseData(String OPERAND) throws NumberFormatException, Exception {
 		if(OPERAND.startsWith("\"") || OPERAND.startsWith("'")) {

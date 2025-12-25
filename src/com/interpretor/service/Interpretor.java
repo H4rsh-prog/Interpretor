@@ -3,6 +3,7 @@ package com.interpretor.service;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,32 +13,21 @@ import com.interpretor.types.Value;
 import com.interpretor.types.functionalInterfaces.TwoParaFunction;
 
 
-public class Interpretor {
+public final class Interpretor {
 	StackMemory STACK = null;
 	static Map<String, Object> Heap = new HashMap();
-	public Map<String, Object> getHeap(){
-		return this.Heap;
-	}
-	Map<String, Object> keywords = new HashMap();
-	public Interpretor(){
-		this.keywords.put("var", new TwoParaFunction<String, Object, Void>() {
-			@Override
-			public Void apply(String variableName, Object variableData) throws InvalidNameException {
-				if(((int)variableName.charAt(0))>=48 && ((int)variableName.charAt(0))<=57) {
-					throw new InvalidNameException("Variable Names cannot start with a Numeric Value");
+	static Map<String, Object> keywords = Map.of(
+			"var", new TwoParaFunction<String, Object, Void>() {
+				@Override
+				public Void apply(String variableName, Object variableData) throws InvalidNameException {
+					if(((int)variableName.charAt(0))>=48 && ((int)variableName.charAt(0))<=57) {
+						throw new InvalidNameException("Variable Names cannot start with a Numeric Value");
+					}
+					Interpretor.Heap.put(variableName, variableData);
+					return null;
 				}
-				getHeap().put(variableName, variableData);
-				return null;
 			}
-		});
-		this.keywords.put("+", new TwoParaFunction<Data,Data,Data>(){
-
-			@Override
-			public Data apply(Data a, Data b) throws Exception {
-				return (Data) a.add(b);
-			}
-		});
-	}
+			);
 	public void render() throws Exception{
 		BufferedReader br = new BufferedReader(new FileReader(new File("C:\\Users\\User\\Documents\\workspace-spring-tools-for-eclipse-4.31.0.RELEASE\\Interpretor\\src\\com\\interpretor\\script\\inp_script")));
 //		while(br.ready()) {
@@ -66,7 +56,7 @@ public class Interpretor {
 		}
 		((TwoParaFunction<String, Object, Void>) this.keywords.get("var")).apply("e",24);
 		((TwoParaFunction<String, Object, Void>) this.keywords.get("var")).apply("fe",new Object() { private int number = 0; public String toString() {return "" +(this.number);}});
-		System.out.println(getHeap());
+		System.out.println(this.Heap);
 		System.out.println(Value.allocateDataType("helo world"));
 	}
 	private void executeStack(StackMemory stack) {

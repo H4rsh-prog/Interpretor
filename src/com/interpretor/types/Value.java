@@ -40,4 +40,21 @@ public class Value<T>{
 			return (T) String.valueOf(inp);
 		}
 	}
+	public static <T> T allocateOriginalDataType(T inp) throws Exception {
+		Class type = inp.getClass();
+		if(type.isInstance(new Integer(0))) {
+			return (T) new Integer((int)inp);
+		} else if(type.isInstance(new Long(0))) {
+			return (T) new Long((long)inp);
+		} else if(type.isInstance(new Float(0))) {
+			return (T) new Float((float)inp);
+		} else if(type.isInstance(new Double(0))) {
+			return (T) new Double((double)inp);
+		} else if(type.isInstance(new String(""))) {
+			return (T) new String((String)inp);
+		} else {
+			return null;
+		}
+	}
+	
 }

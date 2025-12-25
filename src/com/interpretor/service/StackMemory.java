@@ -145,6 +145,7 @@ public class StackMemory {
 @Data
 class StackMemoryNODE<T> {
 	private String OPERAND;
+	private com.interpretor.types.Data<T> DATA = null;
 	private StackMemoryNODE top = null;			//the toString() method will throw a stackOverflow exception because of this node 
 												//but i don't feel like fixing it because in a way you shouldn't be able to log a stack node
 	private StackMemoryNODE left = null;

@@ -9,5 +9,8 @@ public abstract class Data<T>{
 	public String toString() {
 		return (this.Data)+"";
 	}
-//	abstract <T> T add(T DATA);
+	public abstract <T> T add(Data DATA);
+	public abstract <T> T sub(Data DATA);
+	public abstract <T> T mul(Data DATA);
+	public abstract <T> T div(Data DATA);
 }
