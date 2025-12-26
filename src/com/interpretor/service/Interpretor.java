@@ -30,29 +30,27 @@ public final class Interpretor {
 			);
 	public void render() throws Exception{
 		BufferedReader br = new BufferedReader(new FileReader(new File("C:\\Users\\User\\Documents\\workspace-spring-tools-for-eclipse-4.31.0.RELEASE\\Interpretor\\src\\com\\interpretor\\script\\inp_script")));
-//		while(br.ready()) {
-//			String line = br.readLine();
-//			System.out.println(line);
-//			line = line.trim();
-//			int trv_indx = line.indexOf(' ');
-//			String word = line.substring(0, trv_indx!=-1?trv_indx:0);
-//			if(keywords.containsKey(word)) {
-//				keywords.get(word).apply(line.substring(trv_indx).trim());
-//			} else {
-//				if(Heap.containsKey(word)) {
-//				} else {
-//				}
-//			}
-//		}
 		String[] code = br.readLine().split(";");
 		for(String line : code) {
 			System.out.println(line);
 			if(line == "{}") {
 				continue;
 			}
+			System.out.println("````````````````````POPULATING STACK````````````````````````");
 			this.STACK = populateStack(line);
+			System.out.println("````````````````````STACK POPULATED````````````````````````");
 			executeStack(this.STACK);
+			System.out.println("````````````````````STACK EXECUTED````````````````````````");
+			StackMemory.Traverse(this.STACK.getEntryPoint(), 0);
+			System.out.println("````````````````````STACK TRAVERSED````````````````````````");
 		}
+		System.out.println("````````````````````FINISHED INTERPRETING````````````````````````");
+		for(int i=0;i<30;i++) {
+			System.out.println("\n");
+		}
+		System.out.println("````````````````````HEAP MEMORY````````````````````````");
+		System.out.println(this.Heap);
+		System.out.println("````````````````````HEAP MEMORY````````````````````````");
 	}
 	private void executeStack(StackMemory stack) {
 		new Parser(stack.getEntryPoint());

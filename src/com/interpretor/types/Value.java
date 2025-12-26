@@ -11,50 +11,34 @@ public class Value<T>{
 		System.out.println("TYPE = "+TYPE+" CLASS = "+this.class_type+" VALUE = "+this.value);
 		return (T) this.class_type.getConstructor(TYPE).newInstance(this.value);
 	}
-	public static <T> T allocateDataType(T inp) throws Exception {
+	public static <T, R> R allocateDataType(T inp) throws Exception {
 		Class type = inp.getClass();
-		if(type.isInstance(new Long(0))) {
-			long data = (long) inp;
-			if(data>=Integer.MIN_VALUE && data<=Integer.MAX_VALUE) {
-				return (T) new Value_Integer((int) data);
-			} else {
-				return (T) new Value_Long(data);
+		if(Number.class.isInstance(inp)) {
+			int dt =Data.getDTpriority(type.getTypeName());
+			Number data = (Number)inp;
+			switch(dt) {
+				case 2:
+				case 1:
+					if(data.intValue()>=Integer.MIN_VALUE && data.intValue()<=Integer.MAX_VALUE) {
+						return (R) new Value_Integer(data.intValue());
+					}
+					return (R) new Value_Long(data.longValue());
+				case 4:
+				case 3:
+					if(data.floatValue()>=Float.MIN_VALUE && data.floatValue()<=Float.MAX_VALUE) {
+						return (R) new Value_Float(data.floatValue());
+					}
+					return (R) new Value_Double(data.doubleValue());
 			}
-		} else if(type.isInstance(new Integer(0))) {
-			int data = (int) inp;
-			return (T) new Value_Integer((int) data);
-		} else if(type.isInstance(new Double(0))) {
-			double data = (double) inp;
-			if(data>=Float.MIN_VALUE && data<=Float.MAX_VALUE) {
-				return (T) new Value_Float((float) data);
-			} else {
-				return (T) new Value_Double(data);
+		} else {
+			if(Boolean.class.isInstance(type.newInstance())) {
+				return (R) Boolean.valueOf((boolean) inp);
 			}
-		} else if(type.isInstance(new Float(0))) {
-			float data = (float) inp;
-			return (T) new Value_Float((float) data);
-		} else if (type.isInstance(new Boolean(true))) {
-			boolean data = (boolean) inp;
-			return (T) new Value_Boolean(data);
-		} else {
-			return (T) String.valueOf(inp);
 		}
+		return (R) String.valueOf(inp);
 	}
-	public static <T> T allocateOriginalDataType(T inp) throws Exception {
-		Class type = inp.getClass();
-		if(type.isInstance(new Integer(0))) {
-			return (T) new Integer((int)inp);
-		} else if(type.isInstance(new Long(0))) {
-			return (T) new Long((long)inp);
-		} else if(type.isInstance(new Float(0))) {
-			return (T) new Float((float)inp);
-		} else if(type.isInstance(new Double(0))) {
-			return (T) new Double((double)inp);
-		} else if(type.isInstance(new String(""))) {
-			return (T) new String((String)inp);
-		} else {
-			return null;
-		}
+	public static <T> T allocateOriginalDataType(Data inp) throws Exception {
+		Class originalType = inp.Data.getClass();
+		return (T) originalType.getDeclaredConstructor(originalType).newInstance(inp.Data);
 	}
-	
 }

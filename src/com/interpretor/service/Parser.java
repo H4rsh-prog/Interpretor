@@ -8,6 +8,7 @@ import com.interpretor.types.Data;
 import com.interpretor.types.Value;
 import com.interpretor.types.functionalInterfaces.TwoParaFunction;
 
+
 public class Parser {
 	private Set<String> declarationKeyword = Set.of("var", "const", "let");
 	private Set<String> operatorKeyword = Set.of("+", "-", "*", "/", "=");
@@ -22,58 +23,89 @@ public class Parser {
 		}
 	}
 	private void parseValues(StackMemoryNODE root, boolean declaration, String variableName) throws Exception {
-		if(root.getLeft()==null) {
+		if(root==null) {
 			return;
 		}
+		System.out.println("parsing current node = "+root);
 		if(!operatorKeyword.contains(root.getOPERAND())) {
 			System.out.println("NODE DOESNT CONTAIN AN OPERATOR = "+root.getOPERAND());
 			root.setDATA(parseData(root.getOPERAND()));
+			System.out.println("``````````````````DATA PARSER````````````````````");
+			System.out.println("data set to "+root.getDATA());
 		}
 		if(root.getRight()!=null) {
-			parseValues(root.getRight(), declaration, variableName);
+			System.out.println("root has right shifted with the left node = " +root.getLeft().getOPERAND()+" and the right node = "+root.getRight().getOPERAND());
 			parseValues(root.getLeft(), declaration, variableName);
+			parseValues(root.getRight(), declaration, variableName);
+			System.out.println("done parsing right shifted child nodes of "+root.getOPERAND());
+		} else {
+			parseValues(root.getLeft(), declaration, variableName);
+			System.out.println("done parsing child node of "+root.getOPERAND());
 		}
 		if(root.getTop()==null) {
 			return;
 		}
+		System.out.println("CURRENT ROOT IS RIGHT CHILD = " + (root.getTop().getRight()==root));
+		System.out.println("CURRENT ROOT IS LEFT CHILD = " + (root.getTop().getRight()==null));
 		if(root.getTop().getRight()==null || root.getTop().getRight()==root) {
+			System.out.println("OPERATING ON CURRENT NODE");
 			if(operatorKeyword.contains(root.getTop().getOPERAND())) {
 				switch (root.getTop().getOPERAND()){
 					case "+":
-						root.getTop().setDATA((Data) root.getDATA().add(root.getTop().getLeft().getDATA()));
+						root.getTop().setDATA(Data.add(root.getDATA(), root.getTop().getLeft().getDATA()));
 						break;
 					case "-":
-						root.getTop().setDATA((Data) root.getDATA().sub(root.getTop().getLeft().getDATA()));
+						root.getTop().setDATA(Data.subtract(root.getDATA(), root.getTop().getLeft().getDATA()));
 						break;
 					case "*":
-						root.getTop().setDATA((Data) root.getDATA().mul(root.getTop().getLeft().getDATA()));
+						root.getTop().setDATA(Data.multiply(root.getDATA(), root.getTop().getLeft().getDATA()));
 						break;
 					case "/":
-						root.getTop().setDATA((Data) root.getDATA().div(root.getTop().getLeft().getDATA()));
+						root.getTop().setDATA(Data.divide(root.getDATA(), root.getTop().getLeft().getDATA()));
 						break;
-					default:
+					case "=":
 						root.getTop().setDATA(root.getDATA());
+						break;
+				}
+			} else {
+				System.out.println("encountered a variable top");
+				if(root.getOPERAND().equals("=")) {
+					System.out.println(root.getOPERAND() + " is passing the data to its parent "+root.getTop().getOPERAND());
+					root.getTop().setDATA(root.getDATA());
+					System.out.println("parent now has been modified to "+ root.getTop());
+				} else if(this.declarationKeyword.contains(root.getTop().getOPERAND())) {
+					System.out.println("creating new variable");
+					((TwoParaFunction) Interpretor.keywords.get(root.getTop().getOPERAND())).apply(root.getOPERAND(),root.getDATA());
+					System.out.println("variable created by the name of "+root.getOPERAND()+" with the value of "+Interpretor.Heap.get(root.getOPERAND()));
 				}
 			}
 		}
+		System.out.println("done processing current node = "+root);
 	}
 	<T> T parseData(String OPERAND) throws NumberFormatException, Exception {
+		System.out.println("``````````````````DATA PARSER````````````````````");
 		if(OPERAND.startsWith("\"") || OPERAND.startsWith("'")) {
+			System.out.println("operand is a string");
 			return (T) OPERAND;
 		} else {
 			if(isNumeric(OPERAND)) {
+				System.out.println("operand is numeric");
 				if(OPERAND.contains(".")) {
+					System.out.println("operand is floating");
 					return (T) Value.allocateDataType(Double.valueOf(OPERAND));
 				} else {
+					System.out.println("operand is natural");
 					return (T) Value.allocateDataType(Long.valueOf(OPERAND));
 				}
 			} else if(OPERAND == "true" || OPERAND == "false" ) {
+				System.out.println("operand is boolean");
 				if(OPERAND == "true") {
 					return (T) Value.allocateDataType(true);
 				} else {
 					return (T) Value.allocateDataType(false);
 				}
 			} else {
+				System.out.println("operand is object");
 				return (T) Interpretor.Heap.getOrDefault(OPERAND, null);
 			}
 		}
