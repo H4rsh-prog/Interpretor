@@ -52,16 +52,16 @@ public class Parser {
 			if(operatorKeyword.contains(root.getTop().getOPERAND())) {
 				switch (root.getTop().getOPERAND()){
 					case "+":
-						root.getTop().setDATA(Data.add(root.getDATA(), root.getTop().getLeft().getDATA()));
+						root.getTop().setDATA(Data.add(root.getTop().getLeft().getDATA(), root.getDATA()));
 						break;
 					case "-":
-						root.getTop().setDATA(Data.subtract(root.getDATA(), root.getTop().getLeft().getDATA()));
+						root.getTop().setDATA(Data.subtract(root.getTop().getLeft().getDATA(), root.getDATA()));
 						break;
 					case "*":
-						root.getTop().setDATA(Data.multiply(root.getDATA(), root.getTop().getLeft().getDATA()));
+						root.getTop().setDATA(Data.multiply(root.getTop().getLeft().getDATA(), root.getDATA()));
 						break;
 					case "/":
-						root.getTop().setDATA(Data.divide(root.getDATA(), root.getTop().getLeft().getDATA()));
+						root.getTop().setDATA(Data.divide(root.getTop().getLeft().getDATA(), root.getDATA()));
 						break;
 					case "=":
 						root.getTop().setDATA(root.getDATA());
