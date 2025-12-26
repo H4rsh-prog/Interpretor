@@ -51,16 +51,12 @@ public final class Interpretor {
 				continue;
 			}
 			this.STACK = populateStack(line);
-			StackMemory.Traverse(this.STACK.getEntryPoint(),0);
 			executeStack(this.STACK);
 		}
-		((TwoParaFunction<String, Object, Void>) this.keywords.get("var")).apply("e",24);
-		((TwoParaFunction<String, Object, Void>) this.keywords.get("var")).apply("fe",new Object() { private int number = 0; public String toString() {return "" +(this.number);}});
-		System.out.println(this.Heap);
-		System.out.println(Value.allocateDataType("helo world"));
 	}
 	private void executeStack(StackMemory stack) {
-		
+		new Parser(stack.getEntryPoint());
+		System.out.println(stack.getEntryPoint());
 	}
 	private StackMemory populateStack(String code) {
 		return new StackMemory(code);

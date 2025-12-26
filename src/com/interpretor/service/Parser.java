@@ -11,11 +11,22 @@ import com.interpretor.types.functionalInterfaces.TwoParaFunction;
 public class Parser {
 	private Set<String> declarationKeyword = Set.of("var", "const", "let");
 	private Set<String> operatorKeyword = Set.of("+", "-", "*", "/", "=");
+	private StackMemoryNODE entryNODE = null;
+	public Parser(StackMemoryNODE root) {
+		this.entryNODE = root;
+		try {
+			parseValues(root, false, null);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	private void parseValues(StackMemoryNODE root, boolean declaration, String variableName) throws Exception {
 		if(root.getLeft()==null) {
 			return;
 		}
 		if(!operatorKeyword.contains(root.getOPERAND())) {
+			System.out.println("NODE DOESNT CONTAIN AN OPERATOR = "+root.getOPERAND());
 			root.setDATA(parseData(root.getOPERAND()));
 		}
 		if(root.getRight()!=null) {

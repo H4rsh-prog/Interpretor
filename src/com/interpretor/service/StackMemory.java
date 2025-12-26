@@ -7,6 +7,8 @@ import java.util.Set;
 import com.interpretor.exception.InvalidSyntaxException;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Data
@@ -50,13 +52,10 @@ public class StackMemory {
 					root.setTop(parent);
 				} else {
 					root = new StackMemoryNODE(CODE.substring(0, indx));
-					System.out.println("ROOT SET TO "+CODE.substring(0, indx));
 					root.setTop(parent);
 					String newCODE = CODE.substring(indx);
-					System.out.println("NEW CODE  = "+newCODE);
 					if(this.DELIMITERS.contains(newCODE.charAt(0))) {
 						StackMemoryNODE new_node = new StackMemoryNODE(""+newCODE.charAt(0));
-						System.out.println(new_node.getOPERAND());
 						new_node.setLeft(root);
 						root.setTop(new_node);
 						new_node.setTop(parent);
@@ -95,22 +94,16 @@ public class StackMemory {
 		return root;
 	}
 	int firstDelimiterIndex(String CODE) throws InvalidSyntaxException{
-		System.out.println("loop start");
-		System.out.println(CODE);
 		int indx = -1;
 		for(char c : CODE.toCharArray()) {
 			indx++;
-			System.out.println(c+" "+indx);
 			if(this.DELIMITERS.contains(c)) {
-				System.out.println("delimit");
 				if(indx==0) {
 					throw new InvalidSyntaxException();
 				}
-				System.out.println("returning "+indx);
 				return indx;
 			}
 		}
-		System.out.println("loop enede");
 		return -1;
 	}
 	public void Traverse_LEFT(StackMemoryNODE root) {
@@ -124,7 +117,7 @@ public class StackMemory {
 		for(int i =0;i<indent;i++) {
 			System.out.print("\t");
 		}
-		System.out.print("\""+root.getOPERAND()+"\" \n");
+		System.out.print("\""+root.getOPERAND()+"\" = "+root.getDATA()+" \n");
 		for(int i =0;i<indent;i++) {
 			System.out.print("\t");
 		}
@@ -142,15 +135,28 @@ public class StackMemory {
 	}
 }
 
-@Data
 class StackMemoryNODE<T> {
+	@Getter
+	@Setter
 	private String OPERAND;
+	@Getter
+	@Setter
 	private com.interpretor.types.Data<T> DATA = null;
+	@Getter
+	@Setter
 	private StackMemoryNODE top = null;			//the toString() method will throw a stackOverflow exception because of this node 
 												//but i don't feel like fixing it because in a way you shouldn't be able to log a stack node
+	@Getter
+	@Setter
 	private StackMemoryNODE left = null;
+	@Getter
+	@Setter
 	private StackMemoryNODE right = null;
 	public StackMemoryNODE(String OPERAND){
 		this.OPERAND = OPERAND;
+	}
+	
+	public String toString() {
+		return "NODE[OPERAND = "+getOPERAND()+"; DATA = "+getDATA()+"; LEFT = "+getLeft()+"; RIGHT = "+getRight()+"]";
 	}
 }
