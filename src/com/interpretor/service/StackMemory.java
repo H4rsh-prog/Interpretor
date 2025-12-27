@@ -1,15 +1,13 @@
 package com.interpretor.service;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.interpretor.exception.InvalidSyntaxException;
+import com.interpretor.types.Value;
 
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Data
 public class StackMemory {
@@ -18,22 +16,21 @@ public class StackMemory {
 	public StackMemory(String CODE){
 		try {
 			System.out.println("````````````````````POPULATING STACK````````````````````````");
-			this.entryPoint = ParseAndFill(this.entryPoint, null, CODE.trim(), false);
+			this.entryPoint = ParseAndFill(this.entryPoint, new StackMemoryNODE("TERMINATOR"), CODE.trim(), false);
 			Traverse(this.entryPoint, 0);
 			System.out.println("````````````````````STACK POPULATED`````````````````````````");
 			new Parser(this.entryPoint);
 			System.out.println("````````````````````STACK EXECUTED``````````````````````````");
-			
 		} catch (InvalidSyntaxException e) {
 			e.printStackTrace();
-		} finally {
-			Traverse(this.entryPoint, 0);
-			System.out.println("````````````````````STACK TRAVERSED````````````````````````");
 		}
+		Traverse(this.entryPoint, 0);
+		System.out.println("````````````````````STACK TRAVERSED`````````````````````````");
+		System.out.println(this.entryPoint);		//<-----THIS PRINT STATEMENT IS RUNNING FINE AND ENTRYPOINT HAS AN EXISTING NODE WITH THE VALUE 9
 	}
 	private StackMemoryNODE ParseAndFill(StackMemoryNODE root, StackMemoryNODE parent, String CODE, boolean swapFlag) throws InvalidSyntaxException {
 		CODE = CODE.trim();
-		System.out.println(CODE);
+		System.out.println("CODE IN THIS ITERATION = "+CODE);
 		if(CODE == "") {
 			return null;
 		} else {
@@ -54,8 +51,38 @@ public class StackMemory {
 			} else if(CODE.startsWith("(")) {
 				int endIndx = findClosingParenthesis(CODE);
 				System.out.println("parenthesis closed CODE = "+CODE.substring(1,endIndx));
+//				StackMemory recursiveStack = new StackMemory(CODE.substring(1,endIndx));
+//				root = new StackMemoryNODE("NESTED_STACK");
+//				try {
+//					root.setDATA(Parser.parseData(String.valueOf(recursiveStack.getEntryPoint().getDATA())));
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
 				root = new StackMemory(CODE.substring(1,endIndx)).getEntryPoint();
 				root.setTop(parent);
+				String newCODE = CODE.substring(endIndx+1).trim();
+				if(newCODE=="") {
+					return null;
+				}
+				if(this.DELIMITERS.contains(newCODE.charAt(0))) {
+					StackMemoryNODE new_node = new StackMemoryNODE(""+newCODE.charAt(0));
+					new_node.setLeft(root);
+					root.setTop(new_node);
+					new_node.setTop(parent);
+					if(swapFlag) {
+						parent.setRight(new_node);
+					} else {
+						parent.setLeft(new_node);
+					}
+					root = new_node;
+					System.out.println("SENDING CODE "+newCODE.substring(1)+" TO RIGHT CHILD");
+					root.setRight(ParseAndFill(root.getRight(), root, newCODE.substring(1), true));
+					System.out.println("PARENT RETURNED "+ root);
+				} else {
+					root.setLeft(ParseAndFill(root.getLeft(), root, newCODE, false));
+				}
+				System.out.println(root);
+				return root;
 			}
 			int delimitIndx = firstDelimiterIndex(CODE);
 			if(delimitIndx==-1) {
@@ -89,9 +116,6 @@ public class StackMemory {
 		for(char c : CODE.toCharArray()) {
 			indx++;
 			if(this.DELIMITERS.contains(c)) {
-				if(indx==0) {
-					throw new InvalidSyntaxException();
-				}
 				return indx;
 			}
 		}

@@ -16,13 +16,13 @@ public class Parser {
 	public Parser(StackMemoryNODE root) {
 		this.entryNODE = root;
 		try {
-			parseValues(root, false, null);
+			parseValues(root);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	private void parseValues(StackMemoryNODE root, boolean declaration, String variableName) throws Exception {
+	private void parseValues(StackMemoryNODE root) throws Exception {
 		if(root==null) {
 			return;
 		}
@@ -35,11 +35,11 @@ public class Parser {
 		}
 		if(root.getRight()!=null) {
 			System.out.println("root has right shifted with the left node = " +root.getLeft().getOPERAND()+" and the right node = "+root.getRight().getOPERAND());
-			parseValues(root.getLeft(), declaration, variableName);
-			parseValues(root.getRight(), declaration, variableName);
+			parseValues(root.getLeft());
+			parseValues(root.getRight());
 			System.out.println("done parsing right shifted child nodes of "+root.getOPERAND());
 		} else {
-			parseValues(root.getLeft(), declaration, variableName);
+			parseValues(root.getLeft());
 			System.out.println("done parsing child node of "+root.getOPERAND());
 		}
 		if(root.getTop()==null) {
@@ -78,7 +78,7 @@ public class Parser {
 		}
 		System.out.println("done processing current node = "+root+" with its parent modified to "+root.getTop());
 	}
-	<T> T parseData(String OPERAND) throws NumberFormatException, Exception {
+	static <T> T parseData(String OPERAND) throws NumberFormatException, Exception {
 		System.out.println("``````````````````DATA PARSER````````````````````");
 		if(OPERAND.startsWith("\"") || OPERAND.startsWith("'")) {
 			System.out.println("operand is a string");
@@ -106,7 +106,7 @@ public class Parser {
 			}
 		}
 	}
-	boolean isNumeric(String string){
+	static boolean isNumeric(String string){
 		for(char c : string.toCharArray()) {
 			int c_int = (int) c;
 			if((c_int >= 65 && c_int<=90) || c_int >= 97 && c_int<=122) {
