@@ -26,11 +26,11 @@ public class Parser {
 		if(root==null) {
 			return;
 		}
+		System.out.println("``````````````````DATA PARSER````````````````````");
 		System.out.println("parsing current node = "+root);
-		if(!operatorKeyword.contains(root.getOPERAND())) {
+		if(!operatorKeyword.contains(root.getOPERAND()) && root.getDATA()==null) {
 			System.out.println("NODE DOESNT CONTAIN AN OPERATOR = "+root.getOPERAND());
 			root.setDATA(parseData(root.getOPERAND()));
-			System.out.println("``````````````````DATA PARSER````````````````````");
 			System.out.println("data set to "+root.getDATA());
 		}
 		if(root.getRight()!=null) {
@@ -70,17 +70,13 @@ public class Parser {
 			} else {
 				System.out.println("encountered a variable top");
 				if(root.getOPERAND().equals("=")) {
-					System.out.println(root.getOPERAND() + " is passing the data to its parent "+root.getTop().getOPERAND());
-					root.getTop().setDATA(root.getDATA());
-					System.out.println("parent now has been modified to "+ root.getTop());
-				} else if(this.declarationKeyword.contains(root.getTop().getOPERAND())) {
-					System.out.println("creating new variable");
-					((TwoParaFunction) Interpretor.keywords.get(root.getTop().getOPERAND())).apply(root.getOPERAND(),root.getDATA());
-					System.out.println("variable created by the name of "+root.getOPERAND()+" with the value of "+Interpretor.Heap.get(root.getOPERAND()));
+					if(this.declarationKeyword.contains(root.getTop().getOPERAND()) || Interpretor.Heap.containsKey(root.getLeft().getOPERAND())) {
+						((TwoParaFunction) Interpretor.keywords.get("pushHeap")).apply(root.getLeft().getOPERAND(),root.getDATA());
+					}
 				}
 			}
 		}
-		System.out.println("done processing current node = "+root);
+		System.out.println("done processing current node = "+root+" with its parent modified to "+root.getTop());
 	}
 	<T> T parseData(String OPERAND) throws NumberFormatException, Exception {
 		System.out.println("``````````````````DATA PARSER````````````````````");

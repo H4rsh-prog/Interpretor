@@ -13,20 +13,27 @@ import lombok.ToString;
 
 @Data
 public class StackMemory {
-	private Set<Character> DELIMITERS = new HashSet();
+	private Set<Character> DELIMITERS = Set.of('+', '-', '*', '/', ' ', '=');
 	private StackMemoryNODE entryPoint = null;
 	public StackMemory(String CODE){
-		Collections.addAll(this.DELIMITERS, '+', '-', '*', '/');
 		try {
+			System.out.println("````````````````````POPULATING STACK````````````````````````");
 			this.entryPoint = ParseAndFill(this.entryPoint, null, CODE.trim(), false);
+			Traverse(this.entryPoint, 0);
+			System.out.println("````````````````````STACK POPULATED`````````````````````````");
+			new Parser(this.entryPoint);
+			System.out.println("````````````````````STACK EXECUTED``````````````````````````");
+			
 		} catch (InvalidSyntaxException e) {
 			e.printStackTrace();
 		} finally {
 			Traverse(this.entryPoint, 0);
+			System.out.println("````````````````````STACK TRAVERSED````````````````````````");
 		}
 	}
 	private StackMemoryNODE ParseAndFill(StackMemoryNODE root, StackMemoryNODE parent, String CODE, boolean swapFlag) throws InvalidSyntaxException {
 		CODE = CODE.trim();
+		System.out.println(CODE);
 		if(CODE == "") {
 			return null;
 		} else {
@@ -44,36 +51,20 @@ public class StackMemory {
 				root.setTop(parent);
 				root.setLeft(ParseAndFill(root.getLeft(), root, newCODE, false));
 				return root;
-			}
-			if(!CODE.contains(" ")) {
-				int indx = firstDelimiterIndex(CODE);
-				if(indx==-1) {
-					root = new StackMemoryNODE(CODE);
-					root.setTop(parent);
-				} else {
-					root = new StackMemoryNODE(CODE.substring(0, indx));
-					root.setTop(parent);
-					String newCODE = CODE.substring(indx);
-					if(this.DELIMITERS.contains(newCODE.charAt(0))) {
-						StackMemoryNODE new_node = new StackMemoryNODE(""+newCODE.charAt(0));
-						new_node.setLeft(root);
-						root.setTop(new_node);
-						new_node.setTop(parent);
-						if(swapFlag) {
-							parent.setRight(new_node);
-						} else {
-							parent.setLeft(new_node);
-						}
-						root = new_node;
-						root.setRight(ParseAndFill(root.getRight(), root, newCODE.substring(1), true));
-					} else {
-						root.setLeft(ParseAndFill(root.getLeft(), root, newCODE.substring(indx), false));
-					}
-				}
-			} else {
-				root = new StackMemoryNODE(CODE.substring(0,CODE.indexOf(' ')));
+			} else if(CODE.startsWith("(")) {
+				int endIndx = findClosingParenthesis(CODE);
+				System.out.println("parenthesis closed CODE = "+CODE.substring(1,endIndx));
+				root = new StackMemory(CODE.substring(1,endIndx)).getEntryPoint();
 				root.setTop(parent);
-				String newCODE = CODE.substring(CODE.indexOf(' ')+1);
+			}
+			int delimitIndx = firstDelimiterIndex(CODE);
+			if(delimitIndx==-1) {
+				root = new StackMemoryNODE(CODE);
+				root.setTop(parent);
+			} else {
+				root = new StackMemoryNODE(CODE.substring(0, delimitIndx));
+				root.setTop(parent);
+				String newCODE = CODE.substring(delimitIndx).trim();
 				if(this.DELIMITERS.contains(newCODE.charAt(0))) {
 					StackMemoryNODE new_node = new StackMemoryNODE(""+newCODE.charAt(0));
 					new_node.setLeft(root);
@@ -105,6 +96,28 @@ public class StackMemory {
 			}
 		}
 		return -1;
+	}
+	public int findClosingParenthesis(String CODE) throws InvalidSyntaxException {
+		System.out.println("finding parentheis of :-"+CODE);
+		int endIndx = 0;
+		int curIndx = -1;
+		for(char c : CODE.toCharArray()) {
+			curIndx++;
+			if(c=='(') {
+				endIndx++;
+				System.out.println("index incr now "+endIndx );
+			} else if(c==')') {
+				endIndx--;
+				System.out.println("index decr now "+endIndx );
+			}
+			if(endIndx==0) {
+				System.out.println("closing found at "+curIndx);
+				return curIndx;
+			} else if(endIndx<0) {
+				throw new InvalidSyntaxException();
+			}
+		}
+		throw new InvalidSyntaxException();
 	}
 	public void Traverse_LEFT(StackMemoryNODE root) {
 		root = root.getLeft();

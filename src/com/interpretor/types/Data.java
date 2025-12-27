@@ -13,7 +13,7 @@ public abstract class Data<T>{
 //	public abstract <T> T sub(Data DATA);
 //	public abstract <T> T mul(Data DATA);
 //	public abstract <T> T div(Data DATA);
-//	
+	
 	public static Data add(Data d1, Data d2) {
 		Number originData = (Number) d1.Data;
 		Number operandData = (Number) d2.Data;
@@ -53,7 +53,7 @@ public abstract class Data<T>{
 	public static Data divide(Data d1, Data d2) {
 		Number originData = (Number) d1.Data;
 		Number operandData = (Number) d2.Data;
-		int priorityDT = Math.max(getDTpriority(originData.getClass().getTypeName()), getDTpriority(operandData.getClass().getTypeName()));
+		int priorityDT = Math.max(Math.max(getDTpriority(originData.getClass().getTypeName()), getDTpriority(operandData.getClass().getTypeName())), 3);
 		try {
 			return Value.allocateDataType(operate(originData, operandData, '/', priorityDT));
 		} catch (Exception e) {

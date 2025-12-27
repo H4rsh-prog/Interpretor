@@ -8,7 +8,7 @@ public class Value<T>{
 		this.value = value;
 	}
 	T getInstance(Class<T> TYPE) throws Exception{
-		System.out.println("TYPE = "+TYPE+" CLASS = "+this.class_type+" VALUE = "+this.value);
+		System.out.println("NEW VALUE CREATED TYPE = "+TYPE+" CLASS = "+this.class_type+" VALUE = "+this.value);
 		return (T) this.class_type.getConstructor(TYPE).newInstance(this.value);
 	}
 	public static <T, R> R allocateDataType(T inp) throws Exception {
