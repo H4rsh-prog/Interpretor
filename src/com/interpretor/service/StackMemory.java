@@ -26,7 +26,7 @@ public class StackMemory {
 		}
 		Traverse(this.entryPoint, 0);
 		System.out.println("````````````````````STACK TRAVERSED`````````````````````````");
-		System.out.println(this.entryPoint);		//<-----THIS PRINT STATEMENT IS RUNNING FINE AND ENTRYPOINT HAS AN EXISTING NODE WITH THE VALUE 9
+		System.out.println(this.entryPoint);
 	}
 	private StackMemoryNODE ParseAndFill(StackMemoryNODE root, StackMemoryNODE parent, String CODE, boolean swapFlag) throws InvalidSyntaxException {
 		CODE = CODE.trim();
@@ -51,18 +51,24 @@ public class StackMemory {
 			} else if(CODE.startsWith("(")) {
 				int endIndx = findClosingParenthesis(CODE);
 				System.out.println("parenthesis closed CODE = "+CODE.substring(1,endIndx));
-//				StackMemory recursiveStack = new StackMemory(CODE.substring(1,endIndx));
+				StackMemory recursiveStack = new StackMemory(CODE.substring(1,endIndx));
 //				root = new StackMemoryNODE("NESTED_STACK");
 //				try {
 //					root.setDATA(Parser.parseData(String.valueOf(recursiveStack.getEntryPoint().getDATA())));
 //				} catch (Exception e) {
 //					e.printStackTrace();
 //				}
+				
+//				com.interpretor.types.Data recurseData = recursiveStack.getEntryPoint().getDATA();
+//				System.out.println("RECURSION DATA = "+recurseData);
+//				root = new StackMemoryNODE("NESTED_STACK");
+//				root.setDATA(recurseData);
+//				System.out.println("RECURSED ROOT "+root);
 				root = new StackMemory(CODE.substring(1,endIndx)).getEntryPoint();
 				root.setTop(parent);
 				String newCODE = CODE.substring(endIndx+1).trim();
 				if(newCODE=="") {
-					return null;
+					return root;
 				}
 				if(this.DELIMITERS.contains(newCODE.charAt(0))) {
 					StackMemoryNODE new_node = new StackMemoryNODE(""+newCODE.charAt(0));

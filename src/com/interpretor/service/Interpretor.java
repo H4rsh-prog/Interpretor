@@ -41,7 +41,6 @@ public final class Interpretor {
 					continue;
 				}
 				StackMemory currentSTACK = new StackMemory(line);
-				System.out.println(currentSTACK);		//BUT WHEN IM PRINTING THE SAME NODE OUTSIDE THE CONSTRUCTOR IT IS NULL
 			}
 		}
 		System.out.println("````````````````````FINISHED INTERPRETING````````````````````````");

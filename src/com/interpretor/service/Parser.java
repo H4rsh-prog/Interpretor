@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.interpretor.exception.InvalidSyntaxException;
 import com.interpretor.types.Data;
 import com.interpretor.types.Value;
 import com.interpretor.types.functionalInterfaces.TwoParaFunction;
@@ -50,6 +51,7 @@ public class Parser {
 		if(root.getTop().getRight()==null || root.getTop().getRight()==root) {
 			System.out.println("OPERATING ON CURRENT NODE");
 			if(operatorKeyword.contains(root.getTop().getOPERAND())) {
+//				if(root.getTop().getRight()==null) {throw new InvalidSyntaxException("TRIED USING OPERATORS WITH ONLY ONE OPERAND");}
 				switch (root.getTop().getOPERAND()){
 					case "+":
 						root.getTop().setDATA(Data.add(root.getTop().getLeft().getDATA(), root.getDATA()));
