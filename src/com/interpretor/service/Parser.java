@@ -49,7 +49,7 @@ public class Parser {
 		System.out.println("CURRENT ROOT IS RIGHT CHILD = " + (root.getTop().getRight()==root));
 		System.out.println("CURRENT ROOT IS LEFT CHILD = " + (root.getTop().getRight()==null));
 		if(root.getTop().getRight()==null || root.getTop().getRight()==root) {
-			System.out.println("OPERATING ON CURRENT NODE");
+			System.out.println("OPERATING ON CURRENT NODE " +root+ "AND PARENT = "+root.getTop());
 			if(operatorKeyword.contains(root.getTop().getOPERAND())) {
 //				if(root.getTop().getRight()==null) {throw new InvalidSyntaxException("TRIED USING OPERATORS WITH ONLY ONE OPERAND");}
 				switch (root.getTop().getOPERAND()){

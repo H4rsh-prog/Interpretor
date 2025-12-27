@@ -52,24 +52,16 @@ public class StackMemory {
 				int endIndx = findClosingParenthesis(CODE);
 				System.out.println("parenthesis closed CODE = "+CODE.substring(1,endIndx));
 				StackMemory recursiveStack = new StackMemory(CODE.substring(1,endIndx));
-//				root = new StackMemoryNODE("NESTED_STACK");
-//				try {
-//					root.setDATA(Parser.parseData(String.valueOf(recursiveStack.getEntryPoint().getDATA())));
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-				
-//				com.interpretor.types.Data recurseData = recursiveStack.getEntryPoint().getDATA();
-//				System.out.println("RECURSION DATA = "+recurseData);
-//				root = new StackMemoryNODE("NESTED_STACK");
-//				root.setDATA(recurseData);
-//				System.out.println("RECURSED ROOT "+root);
-				root = new StackMemory(CODE.substring(1,endIndx)).getEntryPoint();
+				if(recursiveStack==null) {
+					return null;
+				}
+				root = new StackMemoryNODE("NESTED_STACK");
+				root.setDATA(recursiveStack.getEntryPoint().getDATA());
 				root.setTop(parent);
-				String newCODE = CODE.substring(endIndx+1).trim();
-				if(newCODE=="") {
+				if(CODE.substring(endIndx+1).trim()=="") {
 					return root;
 				}
+				String newCODE = CODE.substring(endIndx+1).trim();
 				if(this.DELIMITERS.contains(newCODE.charAt(0))) {
 					StackMemoryNODE new_node = new StackMemoryNODE(""+newCODE.charAt(0));
 					new_node.setLeft(root);
