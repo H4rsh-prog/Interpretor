@@ -1,2 +1,5 @@
-(25)
-var a =((20+ 2) + (9) - (3)) + (25)
+function Value_Integer fnName(Value_Integer a, Value_Boolean e, Value_Float b){
+	return 25+75-(2*3);
+}
+
+fnName(50, true, 5.658);

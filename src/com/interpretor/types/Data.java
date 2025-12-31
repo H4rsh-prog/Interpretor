@@ -5,6 +5,7 @@ public abstract class Data<T>{
 	public Data(T Data) {
 		this.Data = Data;
 	}
+	public Data() {}
 	@Override
 	public String toString() {
 		return (this.Data)+"";

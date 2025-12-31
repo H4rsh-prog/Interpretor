@@ -1,20 +1,22 @@
 package com.interpretor.service;
 
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-import com.interpretor.exception.InvalidSyntaxException;
 import com.interpretor.types.Data;
+import com.interpretor.types.StackMemoryNODE;
+import com.interpretor.types.TYPE_Function;
 import com.interpretor.types.Value;
 import com.interpretor.types.functionalInterfaces.TwoParaFunction;
 
 
 public class Parser {
+	Map<String, Object> Heap= null;
 	private Set<String> declarationKeyword = Set.of("var", "const", "let");
 	private Set<String> operatorKeyword = Set.of("+", "-", "*", "/", "=");
 	private StackMemoryNODE entryNODE = null;
-	public Parser(StackMemoryNODE root) {
+	public Parser(StackMemoryNODE root, Map<String, Object> heapMemory) {
+		this.Heap = heapMemory;
 		this.entryNODE = root;
 		try {
 			parseValues(root);
@@ -42,6 +44,12 @@ public class Parser {
 		} else {
 			parseValues(root.getLeft());
 			System.out.println("done parsing child node of "+root.getOPERAND());
+		}
+		if(root.getOPERAND()=="FUNCTION_CALL") {
+			System.out.println("ROOT IS A FUNCTION");
+			TYPE_Function fn = ((TYPE_Function)root.getDATA());
+			fn.call();
+			root.getTop().setDATA(fn.getReturnNODE().getDATA());
 		}
 		if(root.getTop()==null) {
 			return;
@@ -72,16 +80,20 @@ public class Parser {
 			} else {
 				System.out.println("encountered a variable top");
 				if(root.getOPERAND().equals("=")) {
-					if(this.declarationKeyword.contains(root.getTop().getOPERAND()) || Interpretor.Heap.containsKey(root.getLeft().getOPERAND())) {
-						((TwoParaFunction) Interpretor.keywords.get("pushHeap")).apply(root.getLeft().getOPERAND(),root.getDATA());
+					if(this.declarationKeyword.contains(root.getTop().getOPERAND()) || this.Heap.containsKey(root.getLeft().getOPERAND())) {
+						this.Heap.put(root.getLeft().getOPERAND(),root.getDATA());
+						if(Interpretor.Heap.containsKey(root.getLeft().getOPERAND())) {
+							Interpretor.Heap.put(root.getLeft().getOPERAND(),root.getDATA());
+						}
 					}
 				}
 			}
 		}
 		System.out.println("done processing current node = "+root+" with its parent modified to "+root.getTop());
 	}
-	static <T> T parseData(String OPERAND) throws NumberFormatException, Exception {
+	public <T> T parseData(String OPERAND) throws NumberFormatException, Exception {
 		System.out.println("``````````````````DATA PARSER````````````````````");
+		OPERAND = OPERAND.trim();
 		if(OPERAND.startsWith("\"") || OPERAND.startsWith("'")) {
 			System.out.println("operand is a string");
 			return (T) OPERAND;
@@ -95,16 +107,16 @@ public class Parser {
 					System.out.println("operand is natural");
 					return (T) Value.allocateDataType(Long.valueOf(OPERAND));
 				}
-			} else if(OPERAND == "true" || OPERAND == "false" ) {
+			} else if(OPERAND.toLowerCase().equals("true") || OPERAND.toLowerCase().equals("false") ) {
 				System.out.println("operand is boolean");
-				if(OPERAND == "true") {
+				if(OPERAND.equals("true")) {
 					return (T) Value.allocateDataType(true);
 				} else {
 					return (T) Value.allocateDataType(false);
 				}
 			} else {
 				System.out.println("operand is object");
-				return (T) Interpretor.Heap.getOrDefault(OPERAND, null);
+				return (T) this.Heap.getOrDefault(OPERAND, null);
 			}
 		}
 	}

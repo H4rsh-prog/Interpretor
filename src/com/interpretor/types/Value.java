@@ -31,8 +31,8 @@ public class Value<T>{
 					return (R) new Value_Double(data.doubleValue());
 			}
 		} else {
-			if(Boolean.class.isInstance(type.newInstance())) {
-				return (R) Boolean.valueOf((boolean) inp);
+			if(Boolean.FALSE == inp || Boolean.TRUE == inp) {
+				return (R) new Value_Boolean((boolean) inp);
 			}
 		}
 		return (R) String.valueOf(inp);
