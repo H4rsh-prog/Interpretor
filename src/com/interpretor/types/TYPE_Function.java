@@ -71,6 +71,9 @@ public class TYPE_Function extends Data {
 				returnFlag = true;
 			}
 			this.stackNODES.add(this.spareMemory.ParseAndFill(null, new StackMemoryNODE("TERMINATOR"), line, false, false));
+			if(returnFlag) {
+				break;
+			}
 		}
 		if(!returnFlag) {
 			throw new InvalidSyntaxException("FUNCTION MUST HAVE A RETURN STATEMENT");
@@ -78,6 +81,51 @@ public class TYPE_Function extends Data {
 			this.returnNODE = this.stackNODES.get(this.stackNODES.size()-1).getLeft();
 		}
 	}
+	public TYPE_Function(String CODE, boolean parametersFlag) {
+		try {
+			this.hasParameters = parametersFlag;
+			if(this.hasParameters) {
+				String[] PARAMETERS = CODE.substring(1,CODE.indexOf(')')).split("[,]");
+				int indx=0;
+				for(String para : PARAMETERS) {
+					para = para.trim();
+					indx++;
+					if(!para.contains(" ")) {
+						throw new InvalidSyntaxException("MISSING NAME IDENTIFIER FOR PARAMETER "+indx);
+					}
+					String type = para.substring(0,para.indexOf(' '));
+					String name = para.substring(para.indexOf(' ')).trim();
+					System.out.println("TYPE :: "+type+" NAME :: "+name);
+					if(name.contains(" ")) {
+						throw new InvalidSyntaxException("UNEXPECTED IDENTIFIER AFTER IN PARAMETER "+indx);
+					}
+					try {
+						this.PARAMETER_CLASS.add(Class.forName("com.interpretor.types."+type));
+					} catch (ClassNotFoundException e) {
+						throw new InvalidSyntaxException("INVALID PARAMETER TYPE");
+					}
+					this.PARAMETER_NAME.add(name);
+				}
+			}
+			CODE = CODE.substring(CODE.indexOf('{')+1,CODE.length()-1).trim();
+			if(CODE=="") {
+				return;
+			}
+			for(String line : CODE.split("\n")) {
+				line = line.trim();
+				if(line.startsWith("//")) {
+					continue;
+				}
+				if(line.startsWith("return ")) {
+					throw new InvalidSyntaxException("VOID TYPE FUNCTIONS CANNOT HAVE A RETURN STATEMENT");
+				}
+				this.stackNODES.add(this.spareMemory.ParseAndFill(null, new StackMemoryNODE("TERMINATOR"), line, false, false));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void call() throws InvalidSyntaxException {
 		System.out.println("FUNCTION CALLED ");
 		int indx = 0;

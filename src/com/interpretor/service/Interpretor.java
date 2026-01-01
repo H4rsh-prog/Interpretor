@@ -94,6 +94,9 @@ public final class Interpretor {
 		}
 		String [] splitCODE = CODE.split("[;|\n]");
 		for(String line : splitCODE) {
+			if(line.startsWith("//")) {
+				continue;
+			}
 			System.out.println("````````````````````NEW LINE ENCOUNTERED````````````````````````");
 			StackMemory currentSTACK = new StackMemory(line, true);
 		}
@@ -109,7 +112,7 @@ public final class Interpretor {
 		((Map<String,TYPE_Function>)this.Heap.get("functionHeap")).put(functionName, new TYPE_Function(CODE, returnType, parametersFlag));
 	}
 	public void createFunction(String CODE, String functionName, boolean parametersFlag){
-		
+		((Map<String,TYPE_Function>)this.Heap.get("functionHeap")).put(functionName, new TYPE_Function(CODE, parametersFlag));
 	}
 	private StackMemory populateStack(String code) {
 		return new StackMemory(code, true);
