@@ -1,11 +1,13 @@
 package com.interpretor.service;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import com.interpretor.types.Data;
 import com.interpretor.types.StackMemoryNODE;
 import com.interpretor.types.TYPE_Function;
+import com.interpretor.types.TYPE_LOOP;
 import com.interpretor.types.Value;
 import com.interpretor.types.functionalInterfaces.TwoParaFunction;
 
@@ -13,7 +15,7 @@ import com.interpretor.types.functionalInterfaces.TwoParaFunction;
 public class Parser {
 	Map<String, Object> Heap= null;
 	private Set<String> declarationKeyword = Set.of("var", "const", "let");
-	private Set<String> operatorKeyword = Set.of("+", "-", "*", "/", "%", "=", "==");
+	private Set<String> operatorKeyword = Set.of("+", "-", "*", "/", "%", "=", "==", "!=");
 	private StackMemoryNODE entryNODE = null;
 	public Parser(StackMemoryNODE root, Map<String, Object> heapMemory) {
 		this.Heap = heapMemory;
@@ -25,13 +27,13 @@ public class Parser {
 			e.printStackTrace();
 		}
 	}
-	private void parseValues(StackMemoryNODE root) throws Exception {
+	public void parseValues(StackMemoryNODE root) throws Exception {
 		if(root==null) {
 			return;
 		}
-		System.out.println("``````````````````DATA PARSER````````````````````");
+		System.out.println("``````````````````VALUE PARSER````````````````````");
 		System.out.println("parsing current node = "+root);
-		if(!operatorKeyword.contains(root.getOPERAND()) && root.getDATA()==null) {
+		if(!operatorKeyword.contains(root.getOPERAND())) {
 			System.out.println("NODE DOESNT CONTAIN AN OPERATOR = "+root.getOPERAND());
 			root.setDATA(parseData(root.getOPERAND()));
 			System.out.println("data set to "+root.getDATA());
@@ -50,6 +52,8 @@ public class Parser {
 			TYPE_Function fn = ((TYPE_Function)root.getDATA());
 			fn.call();
 			root.getTop().setDATA(fn.getReturnNODE().getDATA());
+		} else if(root.getOPERAND().startsWith("LOOP-ID_")) {
+			((HashMap<String, TYPE_LOOP>) Interpretor.Heap.get("loopHeap")).get(root.getOPERAND()).startLoop();
 		}
 		if(root.getTop()==null) {
 			return;
@@ -81,17 +85,24 @@ public class Parser {
 						break;
 					case "==":
 						root.getTop().setDATA(Data.equals(root.getTop().getLeft().getDATA(), root.getDATA()));
-						System.out.println((root.getTop().getLeft().getDATA()==root.getDATA()) + " left child = "+root.getTop().getLeft().getDATA()+" and right child = "+root.getDATA());
+						break;
+					case "!=":
+						root.getTop().setDATA(Data.notEquals(root.getTop().getLeft().getDATA(), root.getDATA()));
 						break;
 				}
 			} else {
 				System.out.println("encountered a variable top");
 				if(root.getOPERAND().equals("=")) {
+					System.out.println("variable value in heap is"+this.Heap.getOrDefault(root.getLeft().getOPERAND(), null)+" and the root value of the variable is "+root.getDATA());
 					if(this.declarationKeyword.contains(root.getTop().getOPERAND()) || this.Heap.containsKey(root.getLeft().getOPERAND())) {
 						this.Heap.put(root.getLeft().getOPERAND(),root.getDATA());
 						if(Interpretor.Heap.containsKey(root.getLeft().getOPERAND())) {
 							Interpretor.Heap.put(root.getLeft().getOPERAND(),root.getDATA());
 						}
+					} else if(this.Heap.getOrDefault(root.getLeft().getOPERAND(), null)!=null) {
+						System.out.println("saving existing vraible");
+						this.Heap.put(root.getLeft().getOPERAND(),root.getDATA());
+						System.out.println("heap is now "+this.Heap);
 					}
 				}
 			}

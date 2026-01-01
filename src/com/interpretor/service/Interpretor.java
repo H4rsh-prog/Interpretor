@@ -12,6 +12,7 @@ import java.util.TreeMap;
 import com.interpretor.exception.InvalidNameException;
 import com.interpretor.exception.InvalidSyntaxException;
 import com.interpretor.types.TYPE_Function;
+import com.interpretor.types.TYPE_LOOP;
 import com.interpretor.types.Value;
 import com.interpretor.types.functionalInterfaces.TwoParaFunction;
 
@@ -20,7 +21,9 @@ import lombok.Getter;
 
 public final class Interpretor {
 	StackMemory STACK = null;
-	public static Map<String, Object> Heap = new HashMap(Map.of("functionHeap", new HashMap<String, TYPE_Function>()));
+	public static Map<String, Object> Heap = new HashMap(Map.of("functionHeap", new HashMap<String, TYPE_Function>()
+																,"loopHeap", new HashMap<String, TYPE_LOOP>()
+																));
 	public static Map<String, Object> keywords = new TreeMap<String,Object>(
 			Collections.unmodifiableMap(Map.of(
 			"pushHeap", new TwoParaFunction<String, Object, Void>() {
@@ -39,8 +42,48 @@ public final class Interpretor {
 		BufferedReader br = new BufferedReader(new FileReader(new File("C:\\Users\\User\\Documents\\workspace-spring-tools-for-eclipse-4.31.0.RELEASE\\Interpretor\\src\\com\\interpretor\\script\\inp_script")));
 		String CODE = "";
 		while(br.ready()) {
-			CODE += br.readLine();
+			String line = br.readLine();
+			if(line.trim().startsWith("//")) {
+				continue;
+			}
+			CODE += line;
 			CODE += "\n";
+		}
+		ArrayList<String> loops = new ArrayList();
+		String loopBlock = "";int loopID = 0;
+		boolean loopFlag = false;
+		do {
+			loopFlag = false;
+			int loopIndx = CODE.indexOf("for");
+			if(loopIndx == -1) {
+				break;
+			} else {
+				loopFlag = true;
+			}
+			int endBlockIndx = spareMemory.findClosingParenthesis(CODE,'{','}',false);
+			loops.add(CODE.substring(loopIndx, endBlockIndx+1));
+			CODE = CODE.replace(CODE.substring(loopIndx, endBlockIndx+1), "LOOP-ID_"+loopID+"_");
+			loopID++;
+		} while(loopFlag);
+		loopID = -1;
+		for(String loop : loops) {
+			loopID++;
+			loop = loop.substring("for".length());
+			if(!loop.startsWith("(")) {
+				throw new InvalidSyntaxException("IMPROPER LOOP DECLARATION:- OPENING BRACKET EXPECTED AFTER FOR KEYWORD");
+			}
+			int endParenthesisIndx = loop.indexOf(')');
+			if(endParenthesisIndx!=-1) {
+				
+				if(loop.substring(endParenthesisIndx+1).trim().startsWith("{")) {
+					System.out.println("valid loop");
+					createLoop(loop, "LOOP-ID_"+loopID+"_");
+				} else {
+					throw new InvalidSyntaxException("IMPROPER LOOP DECLARATION:- LOOP BLOCK EXPECTED");
+				}
+			} else {
+				throw new InvalidSyntaxException("IMPROPER LOOP DECLARATION:- CLOSING BRACKET EXPECTED");
+			}			
 		}
 		CODE = String.join("\n", CODE.split(";"));
 		ArrayList<String> functions = new ArrayList();
@@ -90,13 +133,9 @@ public final class Interpretor {
  				}
 			}
 			throw new InvalidSyntaxException("IMPROPER FUNCTION DECLARATION");
-			
 		}
 		String [] splitCODE = CODE.split("[;|\n]");
 		for(String line : splitCODE) {
-			if(line.startsWith("//")) {
-				continue;
-			}
 			System.out.println("````````````````````NEW LINE ENCOUNTERED````````````````````````");
 			StackMemory currentSTACK = new StackMemory(line, true);
 		}
@@ -111,8 +150,11 @@ public final class Interpretor {
 	public void createFunction(String CODE, String functionName, String returnType, boolean parametersFlag) throws Exception{
 		((Map<String,TYPE_Function>)this.Heap.get("functionHeap")).put(functionName, new TYPE_Function(CODE, returnType, parametersFlag));
 	}
-	public void createFunction(String CODE, String functionName, boolean parametersFlag){
+	public void createFunction(String CODE, String functionName, boolean parametersFlag) throws Exception{
 		((Map<String,TYPE_Function>)this.Heap.get("functionHeap")).put(functionName, new TYPE_Function(CODE, parametersFlag));
+	}
+	public void createLoop(String CODE, String ID) throws Exception {
+		((Map<String,TYPE_LOOP>)this.Heap.get("loopHeap")).put(ID, new TYPE_LOOP(CODE));
 	}
 	private StackMemory populateStack(String code) {
 		return new StackMemory(code, true);

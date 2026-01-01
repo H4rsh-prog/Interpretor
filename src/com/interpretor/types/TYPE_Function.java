@@ -81,49 +81,43 @@ public class TYPE_Function extends Data {
 			this.returnNODE = this.stackNODES.get(this.stackNODES.size()-1).getLeft();
 		}
 	}
-	public TYPE_Function(String CODE, boolean parametersFlag) {
-		try {
-			this.hasParameters = parametersFlag;
-			if(this.hasParameters) {
-				String[] PARAMETERS = CODE.substring(1,CODE.indexOf(')')).split("[,]");
-				int indx=0;
-				for(String para : PARAMETERS) {
-					para = para.trim();
-					indx++;
-					if(!para.contains(" ")) {
-						throw new InvalidSyntaxException("MISSING NAME IDENTIFIER FOR PARAMETER "+indx);
-					}
-					String type = para.substring(0,para.indexOf(' '));
-					String name = para.substring(para.indexOf(' ')).trim();
-					System.out.println("TYPE :: "+type+" NAME :: "+name);
-					if(name.contains(" ")) {
-						throw new InvalidSyntaxException("UNEXPECTED IDENTIFIER AFTER IN PARAMETER "+indx);
-					}
-					try {
-						this.PARAMETER_CLASS.add(Class.forName("com.interpretor.types."+type));
-					} catch (ClassNotFoundException e) {
-						throw new InvalidSyntaxException("INVALID PARAMETER TYPE");
-					}
-					this.PARAMETER_NAME.add(name);
+	public TYPE_Function(String CODE, boolean parametersFlag) throws Exception {
+		this.hasParameters = parametersFlag;
+		if(this.hasParameters) {
+			String[] PARAMETERS = CODE.substring(1,CODE.indexOf(')')).split("[,]");
+			int indx=0;
+			for(String para : PARAMETERS) {
+				para = para.trim();
+				indx++;
+				if(!para.contains(" ")) {
+					throw new InvalidSyntaxException("MISSING NAME IDENTIFIER FOR PARAMETER "+indx);
 				}
-			}
-			CODE = CODE.substring(CODE.indexOf('{')+1,CODE.length()-1).trim();
-			if(CODE=="") {
-				return;
-			}
-			for(String line : CODE.split("\n")) {
-				line = line.trim();
-				if(line.startsWith("//")) {
-					continue;
+				String type = para.substring(0,para.indexOf(' '));
+				String name = para.substring(para.indexOf(' ')).trim();
+				System.out.println("TYPE :: "+type+" NAME :: "+name);
+				if(name.contains(" ")) {
+					throw new InvalidSyntaxException("UNEXPECTED IDENTIFIER AFTER IN PARAMETER "+indx);
 				}
-				if(line.startsWith("return ")) {
-					throw new InvalidSyntaxException("VOID TYPE FUNCTIONS CANNOT HAVE A RETURN STATEMENT");
+				try {
+					this.PARAMETER_CLASS.add(Class.forName("com.interpretor.types."+type));
+				} catch (ClassNotFoundException e) {
+					throw new InvalidSyntaxException("INVALID PARAMETER TYPE");
 				}
-				this.stackNODES.add(this.spareMemory.ParseAndFill(null, new StackMemoryNODE("TERMINATOR"), line, false, false));
+				this.PARAMETER_NAME.add(name);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
+		CODE = CODE.substring(CODE.indexOf('{')+1,CODE.length()-1).trim();
+		if(CODE=="") {
+			return;
+		}
+		for(String line : CODE.split("\n")) {
+			line = line.trim();
+			if(line.startsWith("return ")) {
+				throw new InvalidSyntaxException("VOID TYPE FUNCTIONS CANNOT HAVE A RETURN STATEMENT");
+			}
+			this.stackNODES.add(this.spareMemory.ParseAndFill(null, new StackMemoryNODE("TERMINATOR"), line, false, false));
+		}
+	
 	}
 	
 	public void call() throws InvalidSyntaxException {

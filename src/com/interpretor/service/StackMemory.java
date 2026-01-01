@@ -13,7 +13,7 @@ import lombok.Data;
 
 @Data
 public class StackMemory {
-	private Set<Character> DELIMITERS = Set.of('+', '-', '*', '/', ' ', '=');
+	private Set<Character> DELIMITERS = Set.of('+', '-', '*', '/', ' ', '=', '!');
 	private StackMemoryNODE entryPoint = null;
 	private Set<String> declaredFunctions = ((Map<String, TYPE_Function>)Interpretor.Heap.get("functionHeap")).keySet();
 	private Parser spareParser = new Parser(null, Interpretor.Heap);
@@ -141,6 +141,11 @@ public class StackMemory {
 					}
 				}
 				root.setRight(ParseAndFill(root.getRight(), root, newCODE, true, (parse)?true:false));
+			} else if(CODE.startsWith("LOOP-ID_")) {
+				root = new StackMemoryNODE(CODE.substring(0,CODE.indexOf('_',"LOOP-ID_".length())+1));
+				String newCODE = CODE.substring(root.getOPERAND().length());
+				root.setTop(parent);
+				root.setLeft(ParseAndFill(root.getLeft(), root, newCODE, false, (parse)?true:false));
 			} else {
 				int delimitIndx = firstDelimiterIndex(CODE);
 				if(delimitIndx==-1) {
@@ -246,10 +251,10 @@ public class StackMemory {
 		}
 		throw new InvalidSyntaxException();
 	}
-	public void Traverse_LEFT(StackMemoryNODE root) {
+	private void Traverse_LEFT(StackMemoryNODE root) {
 		root = root.getLeft();
 	}
-	public void Traverse_RIGHT(StackMemoryNODE root) {
+	private void Traverse_RIGHT(StackMemoryNODE root) {
 		root = root.getRight();
 	}
 	public static void Traverse(StackMemoryNODE root, int indent) {

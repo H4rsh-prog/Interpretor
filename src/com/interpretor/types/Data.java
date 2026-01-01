@@ -84,6 +84,15 @@ public abstract class Data<T>{
 		}
 		return null;
 	}
+	public static Value_Boolean notEquals(Data d1, Data d2) {
+		try {
+			return Value.allocateDataType(!d1.Data.equals(d2.Data));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	public static int getDTpriority(String TYPE) {
 		switch(TYPE) {
 			case "java.lang.Integer":

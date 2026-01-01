@@ -1,17 +1,27 @@
-function Value_Boolean fnName(Value_Integer a, Value_Boolean e, Value_Float b){
-	//return (3+3)==(2*3);
-	return false
+for(var e = 1; e!=10; e=e+1){
 }
 
-function Value_Integer add(Value_Integer n1, Value_Integer n2){
-	return n1+n2;
-}
 
-function e(Value_Integer n){
-	//return 2;
-}
-var e = fnName(50, true, 5.658);
+//function Value_Boolean fnName(Value_Integer a, Value_Boolean e, Value_Float b){
+//	return (3+3)==(2*3);
+//	return false
+//}
+
+//function Value_Integer add(Value_Integer n1, Value_Integer n2){
+//	return n1+n2;
+//}
+
+//function e(Value_Integer n){
+//	return 2;
+//}
+//var e = fnName(50, true, 5.658);
 //var a = add(50,95);
 //var b = add(95,50);
 //var c = add(95,50)==a;
 //var d = b == add(95,50);
+//var a = square(4)
+
+//function Value_Integer square(Value_Integer n1){
+//	return n1*n1;
+//}
+
