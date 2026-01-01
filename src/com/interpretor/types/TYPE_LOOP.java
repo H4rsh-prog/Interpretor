@@ -38,32 +38,16 @@ public class TYPE_LOOP {
 			line = line.trim();
 			this.stackNODES.add(this.spareMemory.ParseAndFill(null, new StackMemoryNODE("TERMINATOR"), line, false, false));
 		}
-		this.spareMemory.Traverse(this.init, 0);
-		this.spareMemory.Traverse(this.cond, 0);
-		this.spareMemory.Traverse(this.upd, 0);
 	}
 	public void startLoop() throws Exception {
-		this.spareMemory.Traverse(this.init,0);
 		this.parser.parseValues(this.init);
-		System.out.println("````````````````````````````````````````````````LOOPHEAP");
-		System.out.println(this.loopHeap);
-		System.out.println("````````````````````````````````````````````````LOOPHEAP");
 		this.parser.parseValues(this.cond);
-		int n = 0;
 		while(((Boolean)this.cond.getDATA().Data)) {
 			for(StackMemoryNODE node : this.stackNODES) {
 				this.parser.parseValues(node);
 			}
 			this.parser.parseValues(this.upd);
 			this.parser.parseValues(this.cond);
-			System.out.println("````````````````````````````````````````````````LOOPHEAP");
-			System.out.println(this.loopHeap);
-			System.out.println("````````````````````````````````````````````````LOOPHEAP");
-			n++;
-			if(n>10) {
-				this.cond.getRight().setOPERAND("2");
-				this.spareMemory.Traverse(this.cond, 0);
-			}
 		}
 	}
 }
