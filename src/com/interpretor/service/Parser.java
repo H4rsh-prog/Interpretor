@@ -13,7 +13,7 @@ import com.interpretor.types.functionalInterfaces.TwoParaFunction;
 public class Parser {
 	Map<String, Object> Heap= null;
 	private Set<String> declarationKeyword = Set.of("var", "const", "let");
-	private Set<String> operatorKeyword = Set.of("+", "-", "*", "/", "=");
+	private Set<String> operatorKeyword = Set.of("+", "-", "*", "/", "%", "=", "==");
 	private StackMemoryNODE entryNODE = null;
 	public Parser(StackMemoryNODE root, Map<String, Object> heapMemory) {
 		this.Heap = heapMemory;
@@ -73,8 +73,15 @@ public class Parser {
 					case "/":
 						root.getTop().setDATA(Data.divide(root.getTop().getLeft().getDATA(), root.getDATA()));
 						break;
+					case "%":
+						root.getTop().setDATA(Data.modulus(root.getTop().getLeft().getDATA(), root.getDATA()));
+						break;
 					case "=":
 						root.getTop().setDATA(root.getDATA());
+						break;
+					case "==":
+						root.getTop().setDATA(Data.equals(root.getTop().getLeft().getDATA(), root.getDATA()));
+						System.out.println((root.getTop().getLeft().getDATA()==root.getDATA()) + " left child = "+root.getTop().getLeft().getDATA()+" and right child = "+root.getDATA());
 						break;
 				}
 			} else {

@@ -85,7 +85,7 @@ public class TYPE_Function extends Data {
 			for(Class clazz : this.PARAMETER_CLASS) {
 				System.out.println(this.ARGUMENTS.get(indx));
 				if(!(this.ARGUMENTS.get(indx).getClass()==clazz)) {
-					throw new InvalidSyntaxException("INVALID DATA TYPE AT ARGUMENT "+indx+1);
+					throw new InvalidSyntaxException("INVALID DATA TYPE AT ARGUMENT "+indx+1 +" EXPECTED "+clazz+" BUT FOUND "+this.ARGUMENTS.get(indx));
 				}
 				this.functionHeap.put(this.PARAMETER_NAME.get(indx), this.ARGUMENTS.get(indx));
 				indx++;
@@ -99,7 +99,7 @@ public class TYPE_Function extends Data {
 			new Parser(node, this.functionHeap);
 		}
 		if(this.returnNODE.getDATA().getClass()!=this.returnTypeClass) {
-			throw new InvalidSyntaxException("RETURN TYPE MISMATCH");
+			throw new InvalidSyntaxException("RETURN TYPE MISMATCH : EXPECTED RETURN TYPE = "+this.returnTypeClass+" BUT FOUND = "+this.returnNODE.getDATA().getClass());
 		}
 		System.out.println("`````````````````````````````````````````````````````````````````````````````FN HEAP");
 		System.out.println(this.functionHeap);

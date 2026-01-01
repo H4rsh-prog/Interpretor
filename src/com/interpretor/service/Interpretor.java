@@ -11,8 +11,6 @@ import java.util.TreeMap;
 
 import com.interpretor.exception.InvalidNameException;
 import com.interpretor.exception.InvalidSyntaxException;
-import com.interpretor.types.Data;
-import com.interpretor.types.StackMemoryNODE;
 import com.interpretor.types.TYPE_Function;
 import com.interpretor.types.Value;
 import com.interpretor.types.functionalInterfaces.TwoParaFunction;

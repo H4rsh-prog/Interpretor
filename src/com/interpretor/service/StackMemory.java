@@ -68,6 +68,16 @@ public class StackMemory {
 				String newCODE = CODE.substring(endIndx+1).trim();
 				if(this.DELIMITERS.contains(newCODE.charAt(0))) {
 					StackMemoryNODE new_node = new StackMemoryNODE(""+newCODE.charAt(0));
+					newCODE = newCODE.substring(1).trim();
+					if(newCODE!="") {
+						if(this.DELIMITERS.contains(newCODE.charAt(0))) {
+							new_node = new StackMemoryNODE<>(new_node.getOPERAND()+""+newCODE.charAt(0));
+							newCODE = newCODE.substring(1);
+							System.out.println(new_node.getOPERAND());
+						}
+					} else {
+						throw new InvalidSyntaxException("OPERATOR USED WITHOUT RHS");
+					}
 					new_node.setLeft(root);
 					root.setTop(new_node);
 					new_node.setTop(parent);
@@ -78,7 +88,7 @@ public class StackMemory {
 					}
 					root = new_node;
 					System.out.println("SENDING CODE "+newCODE.substring(1)+" TO RIGHT CHILD");
-					root.setRight(ParseAndFill(root.getRight(), root, newCODE.substring(1), true, (parse)?true:false));
+					root.setRight(ParseAndFill(root.getRight(), root, newCODE, true, (parse)?true:false));
 					System.out.println("PARENT RETURNED "+ root);
 				} else {
 					root.setLeft(ParseAndFill(root.getLeft(), root, newCODE, false, (parse)?true:false));
@@ -106,7 +116,31 @@ public class StackMemory {
 				root.setLeft(new StackMemoryNODE("FUNCTION_CALL"));
 				root.getLeft().setDATA(fn);
 				root.getLeft().setTop(root);
-				root.setRight(ParseAndFill(root.getRight(), root, newCODE, false, (parse)?true:false));
+				if(newCODE!="") {
+					if(this.DELIMITERS.contains(newCODE.charAt(0))) {
+						StackMemoryNODE new_node = new StackMemoryNODE(""+newCODE.charAt(0));
+						newCODE = newCODE.substring(1).trim();
+						if(newCODE!="") {
+							if(this.DELIMITERS.contains(newCODE.charAt(0))) {
+								new_node = new StackMemoryNODE<>(new_node.getOPERAND()+""+newCODE.charAt(0));
+								newCODE = newCODE.substring(1);
+								System.out.println(new_node.getOPERAND());
+							}
+						} else {
+							throw new InvalidSyntaxException("OPERATOR USED WITHOUT RHS");
+						}
+						new_node.setLeft(root);
+						root.setTop(new_node);
+						new_node.setTop(parent);
+						if(swapFlag) {
+							parent.setRight(new_node);
+						} else {
+							parent.setLeft(new_node);
+						}
+						root = new_node;
+					}
+				}
+				root.setRight(ParseAndFill(root.getRight(), root, newCODE, true, (parse)?true:false));
 			} else {
 				int delimitIndx = firstDelimiterIndex(CODE);
 				if(delimitIndx==-1) {
@@ -118,6 +152,16 @@ public class StackMemory {
 					String newCODE = CODE.substring(delimitIndx).trim();
 					if(this.DELIMITERS.contains(newCODE.charAt(0))) {
 						StackMemoryNODE new_node = new StackMemoryNODE(""+newCODE.charAt(0));
+						newCODE = newCODE.substring(1).trim();
+						if(newCODE!="") {
+							if(this.DELIMITERS.contains(newCODE.charAt(0))) {
+								new_node = new StackMemoryNODE<>(new_node.getOPERAND()+""+newCODE.charAt(0));
+								newCODE = newCODE.substring(1);
+								System.out.println(new_node.getOPERAND());
+							}
+						} else {
+							throw new InvalidSyntaxException("OPERATOR USED WITHOUT RHS");
+						}
 						new_node.setLeft(root);
 						root.setTop(new_node);
 						new_node.setTop(parent);
@@ -127,7 +171,7 @@ public class StackMemory {
 							parent.setLeft(new_node);
 						}
 						root = new_node;
-						root.setRight(ParseAndFill(root.getRight(), root, newCODE.substring(1), true, (parse)?true:false));
+						root.setRight(ParseAndFill(root.getRight(), root, newCODE, true, (parse)?true:false));
 					} else {
 						root.setLeft(ParseAndFill(root.getLeft(), root, newCODE, false, (parse)?true:false));
 					}

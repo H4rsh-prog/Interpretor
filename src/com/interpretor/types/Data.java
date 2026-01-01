@@ -63,6 +63,27 @@ public abstract class Data<T>{
 		}
 		return null;
 	}
+	public static Data modulus(Data d1, Data d2) {
+		Number originData = (Number) d1.Data;
+		Number operandData = (Number) d2.Data;
+		int priorityDT = Math.max(Math.max(getDTpriority(originData.getClass().getTypeName()), getDTpriority(operandData.getClass().getTypeName())), 3);
+		try {
+			return Value.allocateDataType(operate(originData, operandData, '%', priorityDT));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public static Value_Boolean equals(Data d1, Data d2) {
+		try {
+			return Value.allocateDataType(d1.Data.equals(d2.Data));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	public static int getDTpriority(String TYPE) {
 		switch(TYPE) {
 			case "java.lang.Integer":
@@ -88,6 +109,8 @@ public abstract class Data<T>{
 					return new Integer((n1.intValue() * n2.intValue()));
 				case '/':
 					return new Integer((n1.intValue() / n2.intValue()));
+				case '%':
+					return new Integer((n1.intValue() % n2.intValue()));
 				}
 				break;
 			case 2:
@@ -100,6 +123,8 @@ public abstract class Data<T>{
 					return new Long((n1.longValue() * n2.longValue()));
 				case '/':
 					return new Long((n1.longValue() / n2.longValue()));
+				case '%':
+					return new Long((n1.longValue() % n2.longValue()));
 				}
 				break;
 			case 3:
@@ -112,6 +137,8 @@ public abstract class Data<T>{
 					return new Float((n1.floatValue() * n2.floatValue()));
 				case '/':
 					return new Float((n1.floatValue() / n2.floatValue()));
+				case '%':
+					return new Float((n1.floatValue() % n2.floatValue()));
 				}
 				break;
 			case 4:
@@ -124,6 +151,8 @@ public abstract class Data<T>{
 					return new Double((n1.doubleValue() * n2.doubleValue()));
 				case '/':
 					return new Double((n1.doubleValue() / n2.doubleValue()));
+				case '%':
+					return new Double((n1.doubleValue() % n2.doubleValue()));
 				}
 				break;
 			default:
