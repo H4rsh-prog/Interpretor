@@ -1,15 +1,19 @@
-for(var e = 1; e!=10; e=e+1){
+function Value_Integer pow(Value_Integer n, Value_Integer p){
+	var result = n;
+	for(var i = 1;i!=p;i=i+1){
+		result = result * n;
+	}
+	return result;
 }
 
+var r = pow(5,3)
 
 //function Value_Boolean fnName(Value_Integer a, Value_Boolean e, Value_Float b){
 //	return (3+3)==(2*3);
 //	return false
 //}
 
-//function Value_Integer add(Value_Integer n1, Value_Integer n2){
-//	return n1+n2;
-//}
+
 
 //function e(Value_Integer n){
 //	return 2;

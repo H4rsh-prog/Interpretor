@@ -16,14 +16,14 @@ public class StackMemory {
 	private Set<Character> DELIMITERS = Set.of('+', '-', '*', '/', ' ', '=', '!');
 	private StackMemoryNODE entryPoint = null;
 	private Set<String> declaredFunctions = ((Map<String, TYPE_Function>)Interpretor.Heap.get("functionHeap")).keySet();
-	private Parser spareParser = new Parser(null, Interpretor.Heap);
+	private Parser spareParser = new Parser();
 	public StackMemory(String CODE, boolean parse){
 		try {
 			System.out.println("````````````````````POPULATING STACK````````````````````````");
 			this.entryPoint = ParseAndFill(this.entryPoint, new StackMemoryNODE("TERMINATOR"), CODE.trim(), false, (parse)?true:false);
 			Traverse(this.entryPoint, 0);
 			System.out.println("````````````````````STACK POPULATED`````````````````````````");
-			if(parse) new Parser(this.entryPoint, Interpretor.Heap);
+			if(parse) new Parser(this.entryPoint, Interpretor.Heap, Interpretor.Heap);
 			System.out.println("````````````````````STACK EXECUTED``````````````````````````");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -55,11 +55,7 @@ public class StackMemory {
 				int endIndx = findClosingParenthesis(CODE);
 				System.out.println("parenthesis closed CODE = "+CODE.substring(1,endIndx));
 				StackMemory recursiveStack = new StackMemory(CODE.substring(1,endIndx), (parse)?true:false);
-				if(recursiveStack==null) {
-					return null;
-				}
-//				root = new StackMemoryNODE("NESTED_STACK");
-//				root.setDATA(recursiveStack.getEntryPoint().getDATA());
+				if(recursiveStack==null) {return null;}
 				root = recursiveStack.getEntryPoint();
 				root.setTop(parent);
 				if(CODE.substring(endIndx+1).trim()=="") {
@@ -96,6 +92,7 @@ public class StackMemory {
 				System.out.println(root);
 			} else if(CODE.indexOf('(')!=-1 && this.declaredFunctions.contains(CODE.substring(0,CODE.indexOf('(')))) {
 				TYPE_Function fn = ((Map<String,TYPE_Function>)Interpretor.Heap.get("functionHeap")).get(CODE.substring(0,CODE.indexOf('(')));
+				System.out.println(fn);
 				String args = CODE.substring(CODE.indexOf('(')+1,CODE.indexOf(')')).trim();
 				String newCODE = CODE.substring(CODE.indexOf(')')+1).trim();
 				if(args!="") {
@@ -185,9 +182,6 @@ public class StackMemory {
 		}
 		return root;
 	}
-//	public functionDeclaration(String CODE, String functionNmae, String returnType) {
-//		
-//	}
 	int firstDelimiterIndex(String CODE) throws InvalidSyntaxException{
 		int indx = -1;
 		for(char c : CODE.toCharArray()) {

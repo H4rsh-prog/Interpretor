@@ -10,10 +10,6 @@ public abstract class Data<T>{
 	public String toString() {
 		return (this.Data)+"";
 	}
-//	public abstract <T> T add(Data DATA);
-//	public abstract <T> T sub(Data DATA);
-//	public abstract <T> T mul(Data DATA);
-//	public abstract <T> T div(Data DATA);
 	
 	public static Data add(Data d1, Data d2) {
 		Number originData = (Number) d1.Data;

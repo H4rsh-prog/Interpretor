@@ -14,21 +14,23 @@ import com.interpretor.service.StackMemory;
 import lombok.Getter;
 import lombok.Setter;
 
-
-public class TYPE_Function extends Data {
+public class TYPE_Function extends com.interpretor.types.Data {
 	private List<StackMemoryNODE> stackNODES = new ArrayList();
 	@Getter
 	private StackMemoryNODE returnNODE = null;
-	private Map<String, Object> functionHeap = new HashMap(Interpretor.Heap);
+	private Map<String, Object> functionHeap = null;
+	private Map<String, Object> parentHeap = null;
 	@Setter
 	private List<Object> ARGUMENTS = new ArrayList();
 	private List<Class> PARAMETER_CLASS = new ArrayList();
 	private List<String> PARAMETER_NAME = new ArrayList();
-	private StackMemory spareMemory = new StackMemory("",false);
+	private StackMemory spareMemory = null;
 	private boolean hasParameters;
 	private Class returnTypeClass = null;
 	
 	public TYPE_Function(String CODE, String returnType, boolean parametersFlag) throws Exception{
+		System.out.println("```````````````````````````````````````FUNCTION CONSTRUCTOR");
+		this.spareMemory = new StackMemory("",false);
 		Class returnTypeClass = null;
 		try {
 			returnTypeClass = Class.forName("com.interpretor.types."+returnType);
@@ -117,11 +119,11 @@ public class TYPE_Function extends Data {
 			}
 			this.stackNODES.add(this.spareMemory.ParseAndFill(null, new StackMemoryNODE("TERMINATOR"), line, false, false));
 		}
-	
 	}
-	
-	public void call() throws InvalidSyntaxException {
-		System.out.println("FUNCTION CALLED ");
+	public void call(Map<String, Object> heapMemory, Map<String, Object> parentMemoryAddress) throws InvalidSyntaxException {
+		this.functionHeap = heapMemory;
+		this.parentHeap = parentMemoryAddress;
+		System.out.println("FUNCTION CALLED "+this);
 		int indx = 0;
 		if(this.hasParameters) {
 			for(Class clazz : this.PARAMETER_CLASS) {
@@ -138,13 +140,29 @@ public class TYPE_Function extends Data {
 			((ArrayList)this.functionHeap.get("REST")).add(this.ARGUMENTS.get(indx));
 		}
 		for(StackMemoryNODE node : this.stackNODES) {
-			new Parser(node, this.functionHeap);
+			new Parser(node, this.functionHeap, this.parentHeap);
+			this.spareMemory.Traverse(node, 0);
 		}
 		if(this.returnNODE.getDATA().getClass()!=this.returnTypeClass) {
 			throw new InvalidSyntaxException("RETURN TYPE MISMATCH : EXPECTED RETURN TYPE = "+this.returnTypeClass+" BUT FOUND = "+this.returnNODE.getDATA().getClass());
+		}
+		System.out.println("MODIFYING CHANGES IN PARENT HEAP MEMORY FROM FUNCTION ");
+		System.out.println("HEAP : "+this.functionHeap);
+		System.out.println("PARENT : "+this.parentHeap);
+		for(Entry<String, Object> mem : this.functionHeap.entrySet()) {
+			if(this.parentHeap.containsKey(mem.getKey())) {
+				System.out.println("FUNCTION KEY FOUND IN PARENT "+mem.getKey());
+				if(!this.parentHeap.get(mem.getKey()).equals(mem.getValue())) {
+					System.out.println("FUNCTION HAS CHANGED FROM "+this.parentHeap.get(mem.getKey())+" TO "+mem.getValue());
+					this.parentHeap.put(mem.getKey(), mem.getValue());
+				}
+			}
 		}
 		System.out.println("`````````````````````````````````````````````````````````````````````````````FN HEAP");
 		System.out.println(this.functionHeap);
 		System.out.println("`````````````````````````````````````````````````````````````````````````````FN HEAP");
 	}
+//	public String toString() {
+//		return "FUNCTION[ stackNODES:"+this.stackNODES+"; returnNODE:"+this.returnNODE+"; PARAMETERS[ CLASS:"+this.PARAMETER_CLASS+"; NAME:"+this.PARAMETER_NAME+"]; ARGUMENTS:"+this.ARGUMENTS+"; RETURN_TYPE:"+this.returnTypeClass+";]";
+//	}
 }

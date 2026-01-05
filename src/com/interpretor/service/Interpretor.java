@@ -11,6 +11,7 @@ import java.util.TreeMap;
 
 import com.interpretor.exception.InvalidNameException;
 import com.interpretor.exception.InvalidSyntaxException;
+import com.interpretor.types.StackMemoryNODE;
 import com.interpretor.types.TYPE_Function;
 import com.interpretor.types.TYPE_LOOP;
 import com.interpretor.types.Value;
@@ -21,8 +22,8 @@ import lombok.Getter;
 
 public final class Interpretor {
 	StackMemory STACK = null;
-	public static Map<String, Object> Heap = new HashMap(Map.of("functionHeap", new HashMap<String, TYPE_Function>()
-																,"loopHeap", new HashMap<String, TYPE_LOOP>()
+	public static Map<String, Object> Heap = new HashMap(Map.of("functionHeap", new HashMap<String, TYPE_Function>(),
+																"loopHeap", new HashMap<String, TYPE_LOOP>()
 																));
 	public static Map<String, Object> keywords = new TreeMap<String,Object>(
 			Collections.unmodifiableMap(Map.of(
@@ -60,9 +61,9 @@ public final class Interpretor {
 			} else {
 				loopFlag = true;
 			}
-			int endBlockIndx = spareMemory.findClosingParenthesis(CODE,'{','}',false);
-			loops.add(CODE.substring(loopIndx, endBlockIndx+1));
-			CODE = CODE.replace(CODE.substring(loopIndx, endBlockIndx+1), "LOOP-ID_"+loopID+"_");
+			int endBlockIndx = spareMemory.findClosingParenthesis(CODE.substring(loopIndx),'{','}',false);
+			loops.add(CODE.substring(loopIndx, loopIndx+endBlockIndx+1));
+			CODE = CODE.replace(CODE.substring(loopIndx, loopIndx+endBlockIndx+1), "LOOP-ID_"+loopID+"_");
 			loopID++;
 		} while(loopFlag);
 		loopID = -1;
@@ -135,9 +136,17 @@ public final class Interpretor {
 			throw new InvalidSyntaxException("IMPROPER FUNCTION DECLARATION");
 		}
 		String [] splitCODE = CODE.split("[;|\n]");
-		for(String line : splitCODE) {
-			System.out.println("````````````````````NEW LINE ENCOUNTERED````````````````````````");
-			StackMemory currentSTACK = new StackMemory(line, true);
+		System.out.println("STARTING INTERPRETION WITH THE INIT HEAP :- "+this.Heap);
+		int indx = 1;
+		ArrayList<StackMemoryNODE> outputStack = new ArrayList();
+		try {
+			for(String line : splitCODE) {
+				System.out.println("````````````````````NEW LINE ENCOUNTERED````````````````````````");
+				outputStack.add(new StackMemory(line, true).getEntryPoint());
+				indx++;
+			}
+		} catch (Exception e) {
+			throw new Exception("INTERPRETATION FAILED AT LINE NUMBER "+indx+" COULD NOT PARSE THE LEADING LINES OF CODE");
 		}
 		System.out.println("````````````````````FINISHED INTERPRETING````````````````````````");
 		for(int i=0;i<30;i++) {
