@@ -4,4 +4,8 @@ public class Value_Integer extends Data{
 	public Value_Integer(int value) throws Exception {
 		super(new Value(value, Integer.class).getInstance(Integer.TYPE));
 	}
+	@Override
+	public String toString() {
+		return String.valueOf(this.Data);
+	}
 }

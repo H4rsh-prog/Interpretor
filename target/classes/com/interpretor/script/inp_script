@@ -6,7 +6,10 @@ function Value_Integer pow(Value_Integer n, Value_Integer p){
 	return result;
 }
 
-var r = pow(5,3)
+var r = pow(58,7)
+var l = pow(5,3)
+var s = l/r
+var m = pow(5,3) / pow(58,7)
 
 //function Value_Boolean fnName(Value_Integer a, Value_Boolean e, Value_Float b){
 //	return (3+3)==(2*3);
@@ -28,4 +31,3 @@ var r = pow(5,3)
 //function Value_Integer square(Value_Integer n1){
 //	return n1*n1;
 //}
-

@@ -91,7 +91,7 @@ public class StackMemory {
 				}
 				System.out.println(root);
 			} else if(CODE.indexOf('(')!=-1 && this.declaredFunctions.contains(CODE.substring(0,CODE.indexOf('(')))) {
-				TYPE_Function fn = ((Map<String,TYPE_Function>)Interpretor.Heap.get("functionHeap")).get(CODE.substring(0,CODE.indexOf('(')));
+				TYPE_Function fn = ((Map<String,TYPE_Function>)Interpretor.Heap.get("functionHeap")).get(CODE.substring(0,CODE.indexOf('('))).getInstance();
 				System.out.println(fn);
 				String args = CODE.substring(CODE.indexOf('(')+1,CODE.indexOf(')')).trim();
 				String newCODE = CODE.substring(CODE.indexOf(')')+1).trim();

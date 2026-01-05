@@ -14,7 +14,7 @@ import com.interpretor.service.StackMemory;
 import lombok.Getter;
 import lombok.Setter;
 
-public class TYPE_Function extends com.interpretor.types.Data {
+public class TYPE_Function extends com.interpretor.types.Data implements Cloneable {
 	private List<StackMemoryNODE> stackNODES = new ArrayList();
 	@Getter
 	private StackMemoryNODE returnNODE = null;
@@ -120,6 +120,9 @@ public class TYPE_Function extends com.interpretor.types.Data {
 			this.stackNODES.add(this.spareMemory.ParseAndFill(null, new StackMemoryNODE("TERMINATOR"), line, false, false));
 		}
 	}
+	public TYPE_Function getInstance() throws CloneNotSupportedException {
+		return (TYPE_Function) this.clone();
+	}
 	public void call(Map<String, Object> heapMemory, Map<String, Object> parentMemoryAddress) throws InvalidSyntaxException {
 		this.functionHeap = heapMemory;
 		this.parentHeap = parentMemoryAddress;
@@ -162,7 +165,4 @@ public class TYPE_Function extends com.interpretor.types.Data {
 		System.out.println(this.functionHeap);
 		System.out.println("`````````````````````````````````````````````````````````````````````````````FN HEAP");
 	}
-//	public String toString() {
-//		return "FUNCTION[ stackNODES:"+this.stackNODES+"; returnNODE:"+this.returnNODE+"; PARAMETERS[ CLASS:"+this.PARAMETER_CLASS+"; NAME:"+this.PARAMETER_NAME+"]; ARGUMENTS:"+this.ARGUMENTS+"; RETURN_TYPE:"+this.returnTypeClass+";]";
-//	}
 }

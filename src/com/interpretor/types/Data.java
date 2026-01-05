@@ -6,10 +6,6 @@ public abstract class Data<T>{
 		this.Data = Data;
 	}
 	public Data() {}
-	@Override
-	public String toString() {
-		return (this.Data)+"";
-	}
 	
 	public static Data add(Data d1, Data d2) {
 		Number originData = (Number) d1.Data;
