@@ -1,5 +1,6 @@
 package com.interpretor.types;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,7 @@ import com.interpretor.service.StackMemory;
 import lombok.Getter;
 import lombok.Setter;
 
-public class TYPE_Function extends com.interpretor.types.Data implements Cloneable {
+public class TYPE_Function extends com.interpretor.types.Data implements Cloneable, Serializable {
 	private List<StackMemoryNODE> stackNODES = new ArrayList();
 	@Getter
 	private StackMemoryNODE returnNODE = null;
@@ -143,6 +144,7 @@ public class TYPE_Function extends com.interpretor.types.Data implements Cloneab
 			((ArrayList)this.functionHeap.get("REST")).add(this.ARGUMENTS.get(indx));
 		}
 		for(StackMemoryNODE node : this.stackNODES) {
+			System.out.println(this.functionHeap);
 			new Parser(node, this.functionHeap, this.parentHeap);
 			this.spareMemory.Traverse(node, 0);
 		}

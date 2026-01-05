@@ -1,6 +1,7 @@
 package com.interpretor.service;
 
 import java.awt.print.Printable;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -14,7 +15,7 @@ import com.interpretor.types.Value;
 import com.interpretor.types.functionalInterfaces.TwoParaFunction;
 
 
-public class Parser {
+public class Parser implements Serializable {
 	private Map<String, Object> Heap= null;
 	private Map<String, Object> parentHeap= null;
 	private Set<String> declarationKeyword = Set.of("var", "const", "let");
@@ -52,13 +53,13 @@ public class Parser {
 			parseValues(root.getLeft());
 			System.out.println("done parsing child node of "+root.getOPERAND());
 		}
-		if(root.getOPERAND()=="FUNCTION_CALL") {
+		if(root.getOPERAND().equals("FUNCTION_CALL")) {
 			System.out.println("ROOT IS A FUNCTION");
 			TYPE_Function fn = ((TYPE_Function)root.getDATA());
 			fn.call(new HashMap<>(this.Heap), this.Heap);
 			root.getTop().setDATA(fn.getReturnNODE().getDATA());
 		} else if(root.getOPERAND().startsWith("LOOP-ID_")) {
-			((HashMap<String, TYPE_LOOP>) Interpretor.Heap.get("loopHeap")).get(root.getOPERAND()).startLoop(new HashMap<>(this.Heap), this.Heap);
+			((HashMap<String, TYPE_LOOP>) this.Heap.get("loopHeap")).get(root.getOPERAND()).startLoop(new HashMap<>(this.Heap), this.Heap);
 		}
 		if(root.getTop()==null) {
 			return;

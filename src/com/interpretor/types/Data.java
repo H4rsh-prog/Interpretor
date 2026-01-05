@@ -1,6 +1,8 @@
 package com.interpretor.types;
 
-public abstract class Data<T>{
+import java.io.Serializable;
+
+public abstract class Data<T> implements Serializable{
 	T Data;
 	public Data(T Data) {
 		this.Data = Data;

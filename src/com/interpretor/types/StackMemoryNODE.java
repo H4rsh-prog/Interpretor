@@ -1,9 +1,11 @@
 package com.interpretor.types;
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
 
-public class StackMemoryNODE<T> {
+public class StackMemoryNODE<T> implements Serializable {
 	@Getter
 	@Setter
 	private String OPERAND;

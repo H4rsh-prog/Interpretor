@@ -1,7 +1,10 @@
 package com.interpretor.service;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,13 +15,16 @@ import com.interpretor.types.TYPE_Function;
 import lombok.Data;
 
 @Data
-public class StackMemory {
+public class StackMemory implements Serializable {
 	private Set<Character> DELIMITERS = Set.of('+', '-', '*', '/', ' ', '=', '!');
 	private StackMemoryNODE entryPoint = null;
-	private Set<String> declaredFunctions = ((Map<String, TYPE_Function>)Interpretor.Heap.get("functionHeap")).keySet();
+	private Set<String> declaredFunctions = new HashSet<>();
 	private Parser spareParser = new Parser();
 	public StackMemory(String CODE, boolean parse){
 		try {
+			for(String key : ((Map<String, TYPE_Function>)Interpretor.Heap.get("functionHeap")).keySet()) {
+				this.declaredFunctions.add(key);
+			}
 			System.out.println("````````````````````POPULATING STACK````````````````````````");
 			this.entryPoint = ParseAndFill(this.entryPoint, new StackMemoryNODE("TERMINATOR"), CODE.trim(), false, (parse)?true:false);
 			Traverse(this.entryPoint, 0);
@@ -32,6 +38,7 @@ public class StackMemory {
 		System.out.println("````````````````````STACK TRAVERSED`````````````````````````");
 		System.out.println(this.entryPoint);
 	}
+	public StackMemory() {}
 	public StackMemoryNODE ParseAndFill(StackMemoryNODE root, StackMemoryNODE parent, String CODE, boolean swapFlag, boolean parse) throws Exception {
 		CODE = CODE.trim();
 		System.out.println("CODE IN THIS ITERATION = "+CODE);

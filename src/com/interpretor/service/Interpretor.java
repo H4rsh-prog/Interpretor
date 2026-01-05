@@ -2,7 +2,11 @@ package com.interpretor.service;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,6 +15,7 @@ import java.util.TreeMap;
 
 import com.interpretor.exception.InvalidNameException;
 import com.interpretor.exception.InvalidSyntaxException;
+import com.interpretor.types.INTERPRETED_STACK_OBJECT;
 import com.interpretor.types.StackMemoryNODE;
 import com.interpretor.types.TYPE_Function;
 import com.interpretor.types.TYPE_LOOP;
@@ -39,8 +44,8 @@ public final class Interpretor {
 			}
 			)));
 	static StackMemory spareMemory = new StackMemory("",false);
-	public void render() throws Exception{
-		BufferedReader br = new BufferedReader(new FileReader(new File("C:\\Users\\User\\Documents\\workspace-spring-tools-for-eclipse-4.31.0.RELEASE\\Interpretor\\src\\com\\interpretor\\script\\inp_script")));
+	public void render(File sourceFile) throws Exception{
+		BufferedReader br = new BufferedReader(new FileReader(sourceFile));
 		String CODE = "";
 		while(br.ready()) {
 			String line = br.readLine();
@@ -142,11 +147,14 @@ public final class Interpretor {
 		try {
 			for(String line : splitCODE) {
 				System.out.println("````````````````````NEW LINE ENCOUNTERED````````````````````````");
-				outputStack.add(new StackMemory(line, true).getEntryPoint());
+				outputStack.add(new StackMemory(line, false).getEntryPoint());
 				indx++;
 			}
 		} catch (Exception e) {
 			throw new Exception("INTERPRETATION FAILED AT LINE NUMBER "+indx+" COULD NOT PARSE THE LEADING LINES OF CODE");
+		} finally {
+			INTERPRETED_STACK_OBJECT output_Object = new INTERPRETED_STACK_OBJECT(outputStack, this.Heap);
+			new ObjectOutputStream(new FileOutputStream(new File("output_Object.o"))).writeObject(output_Object);
 		}
 		System.out.println("````````````````````FINISHED INTERPRETING````````````````````````");
 		for(int i=0;i<30;i++) {

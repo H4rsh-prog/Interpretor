@@ -1,0 +1,9 @@
+function Value_Integer pow(Value_Integer number, Value_Integer power){
+	var result = number;
+	for(var i = 1; i!=power; i = i+1){
+		result = result * number;
+	}
+	return result;
+}
+
+var r= pow(58,4);

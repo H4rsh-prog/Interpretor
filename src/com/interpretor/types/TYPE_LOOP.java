@@ -1,5 +1,6 @@
 package com.interpretor.types;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,7 @@ import com.interpretor.service.Interpretor;
 import com.interpretor.service.Parser;
 import com.interpretor.service.StackMemory;
 
-public class TYPE_LOOP {
+public class TYPE_LOOP implements Serializable {
 	private StackMemoryNODE init = null;
 	private StackMemoryNODE cond = null;
 	private StackMemoryNODE upd = null;
